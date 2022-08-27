@@ -6,27 +6,7 @@ const layoutMap = [
         path: "",
         name: "Index",
         meta: { title: "控制台", icon: "HomeFilled" },
-        component: () => import("../views/Index.vue")
-    },
-    {
-        path: "data",
-        name: "Data",
-        component: RouteView,
-        meta: { title: "数据管理", icon: "DataLine" },
-        children: [
-            {
-                path: "",
-                name: "DataList",
-                meta: { title: "数据列表" },
-                component: () => import("../views/data/List.vue")
-            },
-            {
-                path: "table",
-                name: "DataTable",
-                meta: { title: "数据表格", roles: ["admin"] },
-                component: () => import("../views/data/Table.vue")
-            }
-        ]
+        component: () => import("../views/index/Index.vue")
     },
     {
         path: "admin",
@@ -49,29 +29,25 @@ const layoutMap = [
         ]
     },
     {
-        path: "player",
-        name: "Player",
-        meta: { title: "视频播放", icon: "Film" },
-        component: () => import("../views/common/XGPlayer.vue")
-    },
-    {
-        path: "charts",
-        name: "Charts",
-        meta: { title: "数据图表", icon: "trend-charts" },
-        component: () => import("../views/data/Charts.vue")
-    },
-    {
-        path: "editor",
-        name: "Editor",
-        meta: { title: "富文本编辑器", icon: "Document" },
-        component: () => import("../views/common/Editor.vue")
-    },
-    {
         path: "user",
         name: "User",
         hidden: true /* 不在侧边导航展示 */,
         meta: { title: "个人中心" },
         component: () => import("../views/admin/User.vue")
+    },
+    {
+        path: "test",
+        name: "Test",
+        meta: { title: "测试" },
+        component: RouteView,
+        children: [
+            {
+                path: "v1",
+                name: "v1Test",
+                meta: { title: "v1测试" },
+                component: () => import("../views/test/v1/index.vue")
+            }
+        ]
     },
     {
         path: "/error",
