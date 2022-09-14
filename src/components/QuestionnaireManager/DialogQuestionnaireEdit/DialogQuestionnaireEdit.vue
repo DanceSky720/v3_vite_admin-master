@@ -1,0 +1,131 @@
+<template>
+  <el-dialog
+    v-model="open"
+    title="问卷编辑面板"
+    width="90%"
+    :before-close="handleClose"
+  >
+    <div class="dialog-container">
+      <ComponentSelector @chosen="addSubject" />
+      <PreviewOrEdit
+        v-model="questionnaire.data"
+        :questionnaire-type="questionnaireType"
+        @save="$emit('save')"
+      />
+    </div>
+  </el-dialog>
+</template>
+
+<script setup lang="ts">
+import { PropType, reactive, ref, watch } from 'vue'
+import ComponentSelector from '../ComponentSelector/ComponentSelector.vue'
+import PreviewOrEdit from '../PreviewOrEdit/PreviewOrEdit.vue'
+import { ElMessageBox } from 'element-plus'
+
+const props = defineProps({
+  /**
+   * 问卷
+   */
+  modelValue: {
+    type: Object as PropType<Questionnaire>,
+    default: undefined,
+  },
+  /**
+   * 显隐控制
+   */
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 问卷类型数组
+   */
+  questionnaireType: {
+    type: Array as PropType<questionnaireType[]>,
+    default: [],
+  },
+})
+
+/**
+ * 问卷
+ */
+let questionnaire = reactive({
+  data: {
+    id: undefined,
+    title: undefined,
+    details: undefined,
+    totalScore: undefined,
+    isEnable: undefined,
+    createDate: undefined,
+    lastUpdateUserName: undefined,
+    lastUpdateDate: undefined,
+    type: undefined,
+    subjectList: [],
+  } as Questionnaire,
+})
+/**
+ * 显隐控制
+ */
+let open = ref(false)
+const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
+
+watch([() => props.modelValue, () => props.show],
+  ([modelValue, show]) => {
+    if (modelValue) {
+      questionnaire.data = modelValue
+    }
+    open.value = show
+  },
+  { immediate: true, deep: true }
+)
+
+watch(questionnaire.data, (newValue) => {
+  emit('update:modelValue', newValue)
+})
+
+watch(open, (newValue) => {
+  emit('update:show', newValue)
+})
+/**
+ * 添加一个问卷项目
+ */
+function addSubject(type: SupportedComponentsType) {
+  if (type === 'checkbox' || 'radio') {
+    questionnaire.data.subjectList.push({
+      id: new Date().getTime().toString(),
+      title: undefined,
+      serialNumber: undefined,
+      type: type,
+      options: [],
+    })
+  }
+}
+/**
+ * 关闭前处理函数
+ */
+async function handleClose() {
+  try {
+    const res = await ElMessageBox.confirm(
+      '取消保存后,所做的改变不会生效',
+      '提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+    if (res === 'confirm') {
+      emit('close')
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.dialog-container {
+  display: flex;
+  transition: all 1s;
+}
+</style>
