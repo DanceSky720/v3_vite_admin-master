@@ -12,16 +12,16 @@
         @view="active = $event"
       />
       <el-pagination
-        class="manager-pagination"
         v-model:currentPage="innerCurrentPage"
+        class="manager-pagination"
         :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
         :total="questionnaireList.data.length"
       />
     </div>
     <PreviewOrEdit
-      class="preview"
       v-model="questionnaire.data"
+      class="preview"
       preview
     />
     <DialogQuestionnaireEdit
@@ -38,7 +38,7 @@
 import DialogQuestionnaireEdit from './DialogQuestionnaireEdit/DialogQuestionnaireEdit.vue'
 import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'
 import PreviewOrEdit from './PreviewOrEdit/PreviewOrEdit.vue'
-import { nextTick, PropType, reactive, ref, watch } from 'vue'
+import { PropType, reactive, ref, watch } from 'vue'
 import OperateBar from './OperateBar/OperateBar.vue'
 import { cloneDeep } from 'lodash-es'
 
@@ -48,12 +48,12 @@ const props = defineProps({
    */
   data: {
     type: Object as PropType<Questionnaire[]>,
-    default: null,
+    default: null
   },
   /**
    * 保存问卷的方法
    */
-   saveFunc: {
+  saveFunc: {
     type: Function as PropType<(data: Questionnaire) => void>,
     default: null
   },
@@ -62,49 +62,45 @@ const props = defineProps({
    */
   currentPage: {
     type: Number,
-    default: 1,
+    default: 1
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: [],
+    default: []
   },
   /**
    * 页数
    */
   pageSize: {
     type: Number,
-    default: 10,
-  },
+    default: 10
+  }
 })
 /**
  * 问卷列表
  */
-let questionnaireList = reactive({ data: [] as Questionnaire[] })
+const questionnaireList = reactive({ data: [] as Questionnaire[] })
 /**
  * 激活的下标
  */
-let active = ref(0)
+const active = ref(0)
 /**
  * 当前页
  */
-let innerCurrentPage = ref(1)
+const innerCurrentPage = ref(1)
 /**
  * 显隐控制
  */
-let show = ref(false)
+const show = ref(false)
 /**
  * 问卷
  */
- let questionnaire = reactive({ data: {} as Questionnaire })
+const questionnaire = reactive({ data: {} as Questionnaire })
 
-const emit = defineEmits([
-  'update:currentPage',
-  'reload',
-  'query'
-])
+const emit = defineEmits(['update:currentPage', 'reload', 'query'])
 
 watch(
   [() => props.data, () => props.currentPage],
@@ -144,7 +140,7 @@ function createQuestionnaire() {
     lastUpdateUserName: undefined,
     lastUpdateDate: undefined,
     type: undefined,
-    subjectList: [],
+    subjectList: []
   }
   show.value = true
 }
@@ -158,15 +154,14 @@ function save() {
 /**
  * 编辑弹窗关闭
  */
- function close() {
+function close() {
   show.value = false
-  active.value = 0 
+  active.value = 0
   emit('reload')
 }
 </script>
 
 <style lang="scss" scoped>
-
 .manager-container {
   margin-top: 10px;
   display: flex;

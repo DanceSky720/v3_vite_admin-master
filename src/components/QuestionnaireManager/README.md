@@ -28,8 +28,6 @@ v-model = modelValue / v-model
 | reload | 希望重新获取数据 | 无                  | 0.1.0    |
 | query  | 查询按钮点击触发 | data: string 关键字 | 0.1.0    |
 
-1. 由于把整个问卷列表对象都用 _v-model_ 绑定, 所以请一定实现 _reload_ 事件重新获取问卷列表
-
 ## 3. 业务实现 🤓
 
 ### 1. 组件树
