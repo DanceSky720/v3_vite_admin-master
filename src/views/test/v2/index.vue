@@ -1,7 +1,14 @@
 <template>
   <div class="container">
-    <QuestionnaireManager class="manager" v-model="q.data" :questionnaire-type="questionnaireType.data"
-      v-model:active="active" @reload="reload" @save="save" @query="query" v-model:current-page="current"  />
+    <QuestionnaireManager
+      v-model="q.data"
+      v-model:current-page="current"
+      class="manager"
+      :questionnaire-type="questionnaireType.data"
+      :save-func="something"
+      @reload="reload"
+      @query="query"
+    />
   </div>
 </template>
 
@@ -153,10 +160,6 @@ function reload() {
   console.log('reload')
 }
 
-function save() {
-  console.log(q.data[active.value]);
-
-}
 
 /**
  * 查询按钮点击
@@ -164,6 +167,10 @@ function save() {
  */
  function query(text: string){
   console.log(text);
+}
+
+function something(data: Questionnaire){
+ console.log(data);
   
 }
 </script>

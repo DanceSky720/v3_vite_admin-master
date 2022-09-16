@@ -9,7 +9,7 @@
       <ListQuestionnaire
         :data="questionnaireList.data"
         @edit="edit"
-        @view="view"
+        @view="active = $event"
       />
       <el-pagination
         class="manager-pagination"
@@ -21,11 +21,11 @@
     </div>
     <PreviewOrEdit
       class="preview"
-      v-model="questionnaireList.data[innerActive]"
+      v-model="questionnaireList.data[active]"
       preview
     />
     <DialogQuestionnaireEdit
-      v-model="questionnaireList.data[innerActive]"
+      v-model="questionnaireList.data[active]"
       v-model:show="show"
       :questionnaire-type="questionnaireType"
       @close="close"
@@ -50,11 +50,11 @@ const props = defineProps({
     default: null,
   },
   /**
-   * 激活的下标
+   * 保存问卷的方法
    */
-  active: {
-    type: Number,
-    default: 0,
+   saveFunc: {
+    type: Function as PropType<(data: Questionnaire) => void>,
+    default: null
   },
   /**
    * 当前页
@@ -85,30 +85,30 @@ let questionnaireList = reactive({ data: [] as Questionnaire[] })
 /**
  * 激活的下标
  */
-let innerActive = ref(0)
+let active = ref(0)
 /**
- * 激活的下标
+ * 当前页
  */
-let innerCurrentPage = ref(0)
+let innerCurrentPage = ref(1)
 /**
  * 显隐控制
  */
 let show = ref(false)
+
+let questionnaire = reactive({data: {} as Questionnaire})
 
 const emit = defineEmits([
   'update:modelValue',
   'update:active',
   'update:currentPage',
   'reload',
-  'query',
-  'save',
+  'query'
 ])
 
 watch(
-  [() => props.modelValue, () => props.active, () => props.currentPage],
-  ([modelValue, active, currentPage]) => {
+  [() => props.modelValue, () => props.currentPage],
+  ([modelValue, currentPage]) => {
     questionnaireList.data = modelValue
-    innerActive.value = active
     innerCurrentPage.value = currentPage
   },
   { immediate: true, deep: true }
@@ -117,9 +117,6 @@ watch(
 watch(questionnaireList.data, (newValue) => {
   emit('update:modelValue', newValue)
 })
-watch(innerActive, (newValue) => {
-  emit('update:active', newValue)
-})
 watch(innerCurrentPage, (newValue) => {
   emit('update:currentPage', newValue)
 })
@@ -127,14 +124,8 @@ watch(innerCurrentPage, (newValue) => {
  * 编辑按钮点击事件
  */
 function edit(index: number) {
-  innerActive.value = index
+  active.value = index
   show.value = true
-}
-/**
- * 查看按钮点击事件
- */
-function view(index: number) {
-  innerActive.value = index
 }
 /**
  * 编辑弹窗关闭
@@ -160,7 +151,7 @@ function createQuestionnaire() {
     subjectList: [],
   })
   nextTick(() => {
-    innerActive.value = questionnaireList.data.length - 1
+    active.value = questionnaireList.data.length - 1
     show.value = true
   })
 }
@@ -169,7 +160,7 @@ function createQuestionnaire() {
  */
 function save() {
   show.value = false
-  emit('save')
+  props.saveFunc(questionnaireList.data[active.value])
 }
 </script>
 
@@ -193,7 +184,7 @@ function save() {
 }
 
 .manager-pagination {
-  align-items: flex-end;
   align-self: flex-end;
+  margin: 10px;
 }
 </style>
