@@ -12,7 +12,7 @@ v-model = modelValue / v-model
 
 | 参数                | 说明           | 类型   | 默认值 | 引入版本 |
 | ------------------- | -------------- | ------ | ------ | -------- |
-| v-model             | 问卷列表       | array  | null   | 0.1.0    |
+| data            | 问卷列表       | array  | null   | 0.1.0    |
 | saveFunc            | 保存问卷的方法 | function | null   | 0.1.0    |
 | v-model:currentPage | 当前页         | number | 1      | 0.1.0    |
 | questionnaireType   | 问卷类型数组   | array  | []     | 0.1.0    |

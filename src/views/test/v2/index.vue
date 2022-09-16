@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <QuestionnaireManager
-      v-model="q.data"
+      :data="q.data"
       v-model:current-page="current"
       class="manager"
       :questionnaire-type="questionnaireType.data"
@@ -155,6 +155,11 @@ let q = reactive({
   ]
 })
 
+watch(q.data,(v)=>{
+console.log('index',v);
+
+})
+
 
 function reload() {
   console.log('reload')
@@ -171,6 +176,7 @@ function reload() {
 
 function something(data: Questionnaire){
  console.log(data);
+ this.data.push(data)
   
 }
 </script>

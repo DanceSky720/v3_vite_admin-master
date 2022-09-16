@@ -21,11 +21,11 @@
     </div>
     <PreviewOrEdit
       class="preview"
-      v-model="questionnaireList.data[active]"
+      v-model="questionnaire.data"
       preview
     />
     <DialogQuestionnaireEdit
-      v-model="questionnaireList.data[active]"
+      v-model="questionnaire.data"
       v-model:show="show"
       :questionnaire-type="questionnaireType"
       @close="close"
@@ -40,12 +40,13 @@ import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'
 import PreviewOrEdit from './PreviewOrEdit/PreviewOrEdit.vue'
 import { nextTick, PropType, reactive, ref, watch } from 'vue'
 import OperateBar from './OperateBar/OperateBar.vue'
+import { cloneDeep } from 'lodash-es'
 
 const props = defineProps({
   /**
    * 问卷数据
    */
-  modelValue: {
+  data: {
     type: Object as PropType<Questionnaire[]>,
     default: null,
   },
@@ -94,31 +95,33 @@ let innerCurrentPage = ref(1)
  * 显隐控制
  */
 let show = ref(false)
-
-let questionnaire = reactive({data: {} as Questionnaire})
+/**
+ * 问卷
+ */
+ let questionnaire = reactive({ data: {} as Questionnaire })
 
 const emit = defineEmits([
-  'update:modelValue',
-  'update:active',
   'update:currentPage',
   'reload',
   'query'
 ])
 
 watch(
-  [() => props.modelValue, () => props.currentPage],
-  ([modelValue, currentPage]) => {
-    questionnaireList.data = modelValue
+  [() => props.data, () => props.currentPage],
+  ([data, currentPage]) => {
+    questionnaireList.data = cloneDeep(data)
     innerCurrentPage.value = currentPage
+    questionnaire.data = questionnaireList.data[0]
   },
   { immediate: true, deep: true }
 )
 
-watch(questionnaireList.data, (newValue) => {
-  emit('update:modelValue', newValue)
-})
 watch(innerCurrentPage, (newValue) => {
   emit('update:currentPage', newValue)
+})
+
+watch(active, (newValue) => {
+  questionnaire.data = questionnaireList.data[newValue]
 })
 /**
  * 编辑按钮点击事件
@@ -128,17 +131,10 @@ function edit(index: number) {
   show.value = true
 }
 /**
- * 编辑弹窗关闭
- */
-function close() {
-  show.value = false
-  emit('reload')
-}
-/**
  * 创建空问卷
  */
 function createQuestionnaire() {
-  questionnaireList.data.push({
+  questionnaire.data = {
     id: undefined,
     title: undefined,
     details: undefined,
@@ -149,18 +145,23 @@ function createQuestionnaire() {
     lastUpdateDate: undefined,
     type: undefined,
     subjectList: [],
-  })
-  nextTick(() => {
-    active.value = questionnaireList.data.length - 1
-    show.value = true
-  })
+  }
+  show.value = true
 }
 /**
  * 保存按钮点击
  */
 function save() {
   show.value = false
-  props.saveFunc(questionnaireList.data[active.value])
+  props.saveFunc(questionnaire.data)
+}
+/**
+ * 编辑弹窗关闭
+ */
+ function close() {
+  show.value = false
+  active.value = 0 
+  emit('reload')
 }
 </script>
 
