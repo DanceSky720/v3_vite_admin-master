@@ -14,7 +14,7 @@
       <el-pagination
         class="manager-pagination"
         v-model:currentPage="innerCurrentPage"
-        :page-sizes="pageSize"
+        :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
         :total="questionnaireList.data.length"
       />
@@ -174,6 +174,7 @@ function save() {
 </script>
 
 <style lang="scss" scoped>
+
 .manager-container {
   margin-top: 10px;
   display: flex;
@@ -192,8 +193,7 @@ function save() {
 }
 
 .manager-pagination {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+  align-items: flex-end;
+  align-self: flex-end;
 }
 </style>

@@ -1,10 +1,12 @@
 <template>
   <div class="selector-container">
-    <p class="components-title">添加题目</p>
+    <p class="components-title">
+      添加题目
+    </p>
     <el-button
-      class="btn-selector"
       v-for="item in supportedComponents"
       :key="item.label"
+      class="btn-selector"
       :icon="Plus"
       type="primary"
       plain
@@ -23,7 +25,7 @@ import { reactive } from 'vue'
  */
 const supportedComponents = reactive([
   { label: '单项选择', type: 'radio' },
-  { label: '多项选择', type: 'checkbox' },
+  { label: '多项选择', type: 'checkbox' }
 ])
 
 defineEmits(['chosen'])

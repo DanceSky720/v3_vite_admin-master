@@ -1,23 +1,49 @@
 <template>
   <div class="container">
-    <el-table :data="data" height="550px"  stripe>
-      <el-table-column type="index" align="center" />
-      <el-table-column label="ID" prop="id" align="center" />
-      <el-table-column label="问卷名称" prop="title" align="center" />
-      <el-table-column label="创建日期" prop="createDate" align="center" />
+    <el-table
+      :data="data"
+      height="550px"
+      stripe
+    >
+      <el-table-column
+        type="index"
+        align="center"
+      />
+      <el-table-column
+        label="ID"
+        prop="id"
+        align="center"
+      />
+      <el-table-column
+        label="问卷名称"
+        prop="title"
+        align="center"
+      />
+      <el-table-column
+        label="创建日期"
+        prop="createDate"
+        align="center"
+      />
       <el-table-column
         label="最后修改时间"
         prop="lastUpdateDate"
         align="center"
       />
-      <el-table-column label="状态" prop="isEnable" align="center">
+      <el-table-column
+        label="状态"
+        prop="isEnable"
+        align="center"
+      >
         <template #default="{ row }">
           <span :style="enableCell(row.isEnable).color">
             {{ enableCell(row.isEnable).text }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column
+        label="操作"
+        align="center"
+      >
         <template #default="{ $index }">
           <el-button
             class="list-btn"
@@ -38,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-  import { Edit, Search } from '@element-plus/icons-vue'
+import { Edit, Search } from '@element-plus/icons-vue'
 import { PropType } from 'vue'
 defineProps({
   /**
@@ -46,8 +72,8 @@ defineProps({
    */
   data: {
     type: Array as PropType<Questionnaire[]>,
-    default: [],
-  },
+    default: []
+  }
 })
 
 /**
@@ -65,6 +91,7 @@ defineEmits(['edit', 'view'])
 </script>
 
 <style lang="scss" scoped>
+
 .container {
   background: #fff;
   margin: 10px;

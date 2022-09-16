@@ -15,21 +15,20 @@
       </template>
     </el-input>
     <div class="right">
-      <el-button 
-        :icon="Refresh" 
+      <el-button
+        :icon="Refresh"
         @click="$emit('reload')"
-        >
+      >
         刷新
       </el-button>
-      <el-button 
-        :icon="Plus" 
-        type="primary" 
-        plain 
+      <el-button
+        :icon="Plus"
+        type="primary"
+        plain
         @click="$emit('create')"
-        >
-        创建问卷
-        </el-button
       >
+        创建问卷
+      </el-button>
     </div>
   </div>
 </template>
@@ -41,7 +40,7 @@ import { ref } from 'vue'
 /**
  * 输入框绑定值
  */
-let data = ref('')
+const data = ref('')
 
 defineEmits(['reload', 'create', 'query'])
 </script>

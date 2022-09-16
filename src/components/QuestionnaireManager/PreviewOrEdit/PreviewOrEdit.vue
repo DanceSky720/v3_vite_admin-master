@@ -3,32 +3,45 @@
     <p class="title">
       {{ questionnaire.data.title }}
     </p>
-    <el-form v-if="!preview" inline>
+    <el-form
+      inline
+    >
       <el-form-item
-        required 
-        class="label-item" 
-        label="问卷名">
+        v-if="!preview"
+        class="label-item"
+        label="问卷名"
+      >
         <el-input
+          v-model="questionnaire.data.title"
           class="title-input"
           show-word-limit
-          v-if="!preview"
-          v-model="questionnaire.data.title"
           placeholder="请输入问卷名"
           clearable
         />
       </el-form-item>
       <el-form-item label="是否启用">
-        <el-radio-group v-model="questionnaire.data.isEnable">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
+        <el-radio-group
+          v-model="questionnaire.data.isEnable"
+          :disabled="preview"
+        >
+          <el-radio :label="1">
+            是
+          </el-radio>
+          <el-radio :label="0">
+            否
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item
-        required 
-        label="问卷类型">
-        <el-select 
-          v-model="questionnaire.data.type" 
-          placeholder="选择问卷类型">
+        v-if="!preview"
+        label="问卷类型"
+        :disabled="preview"
+      >
+        <el-select
+
+          v-model="questionnaire.data.type"
+          placeholder="选择问卷类型"
+        >
           <el-option
             v-for="item in questionnaireType"
             :key="item.value"
@@ -38,15 +51,18 @@
         </el-select>
       </el-form-item>
       <el-input
-        v-if="!preview"
-        class="questionnaire-details"
         v-model="questionnaire.data.details"
+        class="questionnaire-details"
         :rows="3"
+        :disabled="preview"
         type="textarea"
         placeholder="问卷说明"
       />
     </el-form>
-    <div class="btn-group" v-if="!preview">
+    <div
+      v-if="!preview"
+      class="btn-group"
+    >
       <el-button
         class="btn"
         :icon="DocumentAdd"
@@ -54,22 +70,27 @@
         type="primary"
         :disabled="!allow"
         @click="$emit('save')"
-        >保存
+      >
+        保存
       </el-button>
       <el-button
         class="btn"
         :icon="open ? TurnOff : Open"
-        @click="open = !open"
         plain
+        @click="open = !open"
       >
         {{ open ? '关闭' : '展开' }}
       </el-button>
     </div>
-    <TransitionGroup name="bounce" tag="div" class="transition-group">
+    <TransitionGroup
+      name="bounce"
+      tag="div"
+      class="transition-group"
+    >
       <div
-        class="subject"
         v-for="(subject, index) in questionnaire.data.subjectList"
         :key="subject.id"
+        class="subject"
       >
         <div class="subject-title">
           <p>
@@ -104,14 +125,20 @@
             />
           </div>
         </div>
-        <div class="group" v-if="subject.type === 'checkbox'">
+        <div
+          v-if="subject.type === 'checkbox'"
+          class="group"
+        >
           <el-checkbox
             v-for="option in subject.options"
             :key="option.title"
             :label="option.title"
           />
         </div>
-        <div class="group" v-if="subject.type === 'radio'">
+        <div
+          v-if="subject.type === 'radio'"
+          class="group"
+        >
           <el-radio
             v-for="option in subject.options"
             :key="option.title"
@@ -136,7 +163,7 @@ import {
   ArrowDownBold,
   Open,
   TurnOff,
-  DocumentAdd,
+  DocumentAdd
 } from '@element-plus/icons-vue'
 import { computed, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
@@ -147,62 +174,55 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 预览模式
    */
   preview: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: [],
-  },
+    default: []
+  }
 })
 
 /**
  * 问卷
  */
-let questionnaire = reactive({
-  data: {
-    id: undefined,
-    title: undefined,
-    details: undefined,
-    totalScore: undefined,
-    isEnable: undefined,
-    createDate: undefined,
-    lastUpdateUserName: undefined,
-    lastUpdateDate: undefined,
-    type: undefined,
-    subjectList: [],
-  } as Questionnaire,
+const questionnaire = reactive({
+  data: {} as Questionnaire
 })
 
 /**
  * 是否展开题目编辑面板
  */
-let open = ref(false)
+const open = ref(false)
 /**
  * 是否允许点击保存按钮
  */
-let allow = computed(() => {
+const allow = computed(() => {
   const checkArray = [
     hasUniqueTitle(questionnaire.data.subjectList),
     emptyTitle(questionnaire.data.subjectList),
     emptyOptions(questionnaire.data.subjectList),
     emptyOptionsTitles(questionnaire.data.subjectList),
-    questionnaire.data.subjectList.length > 0
+    questionnaire.data.subjectList.length > 0,
+    questionnaire.data.title ? questionnaire.data.title.length > 0 : false,
+    questionnaire.data.type ? questionnaire.data.type.length > 0 : false
   ]
   return checkArray.every((pass: boolean) => pass)
 })
 const emit = defineEmits(['update:modelValue', 'save'])
 
-watch(() => props.modelValue, (newValue) => {
+watch(
+  () => props.modelValue,
+  (newValue) => {
     if (newValue) {
       questionnaire.data = newValue
     }
@@ -215,7 +235,7 @@ watch(questionnaire.data, (newValue) => {
 })
 
 /**
- * 上移数组元素
+ * 上移题目
  * @param index 要上移的元素下标
  */
 function upwards(index: number) {
@@ -225,7 +245,7 @@ function upwards(index: number) {
   )
 }
 /**
- * 下移数组元素
+ * 下移题目
  * @param index 要下移的元素下标
  */
 function downward(index: number) {
@@ -235,7 +255,7 @@ function downward(index: number) {
   )
 }
 /**
- * 移除数组元素
+ * 移除题目
  * @param index 要移除的元素下标
  */
 function remove(index: number) {
@@ -325,7 +345,6 @@ function subjectType(type: string | undefined) {
 }
 
 .questionnaire-details {
-  width: 80%;
   box-sizing: border-box;
   margin-bottom: 10px;
 }

@@ -10,15 +10,15 @@
 
 v-model = modelValue / v-model
 
-| 参数              | 说明         | 类型   | 默认值    | 引入版本 |
-| ----------------- | ------------ | ------ | --------- | -------- |
-| v-model `必要` | 问卷列表     | array  |           | 0.1.0    |
-|v-model:active `必要` | 激活的下标   | number |           | 0.1.0    |
-| v-model:currentPage      | 当前页     | number | 1 | 0.1.0    |
-| questionnaireType | 问卷类型数组 | array  | []        | 0.1.0    |
-| pageSize | 页码 | umber  | 10        | 0.1.0    |
+| 参数                | 说明         | 类型   | 默认值 | 引入版本 |
+| ------------------- | ------------ | ------ | ------ | -------- |
+| v-model             | 问卷列表     | array  | null   | 0.1.0    |
+| v-model:active      | 激活的下标   | number | 0      | 0.1.0    |
+| v-model:currentPage | 当前页       | number | 1      | 0.1.0    |
+| questionnaireType   | 问卷类型数组 | array  | []     | 0.1.0    |
+| pageSize            | 页码         | umber  | 10     | 0.1.0    |
 
-1. *currentPage* 的改变可用 *watch* 监听
+1. *currentPage* 的改变可用*watch* 监听
 
 ### 2.2 Events
 

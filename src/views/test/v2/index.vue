@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <QuestionnaireManager class="manager" v-model="q.data" :questionnaire-type="questionnaireType.data"
-      v-model:active="active" @reload="reload" @save="save" @query="query"  />
+      v-model:active="active" @reload="reload" @save="save" @query="query" v-model:current-page="current"  />
   </div>
 </template>
 
@@ -9,9 +9,10 @@
 import { reactive, ref, toRefs, watch } from 'vue'
 import QuestionnaireManager from '../../../components/QuestionnaireManager/QuestionnaireManager.vue'
 
-let questionnaireType = reactive({data:[{label:'q',value:'q'},{label:'w',value:'w'}] as questionnaireType[]})
+let questionnaireType = reactive({data:[{label:'流调表',value:'ldb'},{label:'问卷',value:'wj'}] as questionnaireType[]})
 
 let active = ref(0)
+let current = ref(1)
 
 let q = reactive({
   data: [
@@ -28,7 +29,7 @@ let q = reactive({
       subjectList: [
         {
           id: '9',
-          title: '你影土队办温会',
+          title: '你影土队办温会1',
           serialNumber: 25,
           type: 'radio',
           options: [

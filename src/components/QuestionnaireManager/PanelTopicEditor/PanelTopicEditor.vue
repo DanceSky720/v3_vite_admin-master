@@ -4,13 +4,17 @@
       class="add-btn"
       type="primary"
       :disabled="!allow"
-      @click="addOption"
       plain
-      >添加新选项</el-button
+      @click="addOption"
     >
+      添加新选项
+    </el-button>
     <div class="edit-area">
       <el-form>
-        <el-form-item label="题目" size="large">
+        <el-form-item
+          label="题目"
+          size="large"
+        >
           <el-input
             v-model="questionnaireSubject.data.title"
             size="large"
@@ -18,35 +22,39 @@
           />
         </el-form-item>
         <p
-          class="row"
           v-if="questionnaireSubject.data.type === 'checkbox' || 'radio'"
+          class="row"
         >
           <span class="col">选项标题</span>
           <span class="col">选项说明</span>
           <span class="col">分数</span>
           <span class="col col-last">操作</span>
         </p>
-        <TransitionGroup name="fade" tag="div" class="transition-group">
+        <TransitionGroup
+          name="fade"
+          tag="div"
+          class="transition-group"
+        >
           <div
-            class="row"
             v-for="(option, index) in questionnaireSubject.data.options"
             :key="index"
+            class="row"
           >
-          <!-- // TODO 为没有唯一值的options寻找唯一值 -->
+            <!-- // TODO 为没有唯一值的options寻找唯一值 -->
             <el-input
-              class="col"
               v-model="option.title"
+              class="col"
               placeholder="请输入标题"
             />
             <el-input
-              class="col"
               v-model="option.explain"
+              class="col"
               placeholder="请输入说明"
             />
             <el-input
+              v-model="option.fraction"
               class="col"
               type="number"
-              v-model="option.fraction"
               placeholder="请输入分数"
             />
             <div class="col-last">
@@ -87,21 +95,15 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<QuestionnaireSubject>,
-    default: undefined,
-  },
+    default: undefined
+  }
 })
 
 /**
  * 题目
  */
-let questionnaireSubject = reactive({
-  data: {
-    id: undefined,
-    title: undefined,
-    serialNumber: undefined,
-    type: undefined,
-    options: [],
-  } as QuestionnaireSubject,
+const questionnaireSubject = reactive({
+  data: { } as QuestionnaireSubject
 })
 // TODO 为没有唯一值的options寻找唯一值
 
@@ -110,23 +112,23 @@ const emit = defineEmits(['update:modelValue'])
 /**
  * 是否允许添加新的选项
  */
-let allow = computed(() => {
-  const isTitle =  questionnaireSubject.data.options.every(
-      (option: SubjectOption) => option.title !== ''
-    )
-  const checkArray: Array<Boolean> = [
+const allow = computed(() => {
+  const isTitle = questionnaireSubject.data.options.every(
+    (option: SubjectOption) => option.title !== ''
+  )
+  const checkArray: Array<boolean> = [
     isTitle,
     questionnaireSubject.data.options.length < 4
   ]
-  return checkArray.every((pass: Boolean) => pass)
+  return checkArray.every((pass: boolean) => pass)
 })
 
 watch(() => props.modelValue, (modelValue) => {
-    if (modelValue) {
-      questionnaireSubject.data = modelValue
-    }
-  },
-  { immediate: true }
+  if (modelValue) {
+    questionnaireSubject.data = modelValue
+  }
+},
+{ immediate: true }
 )
 
 watch(questionnaireSubject.data, (newValue) => {
@@ -134,7 +136,7 @@ watch(questionnaireSubject.data, (newValue) => {
 })
 
 /**
- * 上移数组元素
+ * 上移选项
  * @param index 要上移的元素下标
  */
 function upwards(index: number) {
@@ -145,7 +147,7 @@ function upwards(index: number) {
 }
 
 /**
- * 下移数组元素
+ * 下移选项
  * @param index 要下移的元素下标
  */
 function downward(index: number) {
@@ -163,12 +165,12 @@ function addOption() {
     title: '',
     serialNumber: undefined,
     explain: undefined,
-    fraction: undefined,
+    fraction: undefined
   })
 }
 
 /**
- * 移除数组元素
+ * 移除选项
  * @param index 要移除的元素下标
  */
 function remove(index: number) {

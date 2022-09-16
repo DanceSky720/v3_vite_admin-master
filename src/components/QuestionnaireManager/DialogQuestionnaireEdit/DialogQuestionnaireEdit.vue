@@ -28,48 +28,38 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 显隐控制
    */
   show: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: [],
-  },
+    default: []
+  }
 })
 
 /**
  * 问卷
  */
-let questionnaire = reactive({
-  data: {
-    id: undefined,
-    title: undefined,
-    details: undefined,
-    totalScore: undefined,
-    isEnable: undefined,
-    createDate: undefined,
-    lastUpdateUserName: undefined,
-    lastUpdateDate: undefined,
-    type: undefined,
-    subjectList: [],
-  } as Questionnaire,
+const questionnaire = reactive({
+  data: {} as Questionnaire
 })
 /**
  * 显隐控制
  */
-let open = ref(false)
+const open = ref(false)
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
-watch([() => props.modelValue, () => props.show],
+watch(
+  [() => props.modelValue, () => props.show],
   ([modelValue, show]) => {
     if (modelValue) {
       questionnaire.data = modelValue
@@ -89,16 +79,14 @@ watch(open, (newValue) => {
 /**
  * 添加一个问卷项目
  */
-function addSubject(type: SupportedComponentsType) {
-  if (type === 'checkbox' || 'radio') {
-    questionnaire.data.subjectList.push({
-      id: new Date().getTime().toString(),
-      title: undefined,
-      serialNumber: undefined,
-      type: type,
-      options: [],
-    })
-  }
+function addSubject(type: string) {
+  questionnaire.data.subjectList.push({
+    id: new Date().getTime().toString(),
+    title: undefined,
+    serialNumber: undefined,
+    type: type,
+    options: []
+  })
 }
 /**
  * 关闭前处理函数
@@ -111,7 +99,7 @@ async function handleClose() {
       {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
+        type: 'warning'
       }
     )
     if (res === 'confirm') {
