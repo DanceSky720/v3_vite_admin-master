@@ -19,7 +19,9 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="是否启用">
+      <el-form-item     
+        v-if="!preview" 
+        label="是否启用">
         <el-radio-group
           v-model="questionnaire.data.isEnable"
           :disabled="preview"
@@ -166,9 +168,9 @@ import {
   TurnOff,
   DocumentAdd
 } from '@element-plus/icons-vue'
+import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue';
 import { computed, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
-import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue';
 const props = defineProps({
   /**
    * 问卷
@@ -310,13 +312,12 @@ function subjectType(type: string | undefined) {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
   box-sizing: border-box;
   margin: 20px;
   padding: 20px;
   background: #fff;
   box-shadow: $q-box-shadow-normal;
-  overflow: hidden;
+  overflow-y: scroll;
   border-radius: $q-border-radius-normal;
   transition: all 0.5s;
 }

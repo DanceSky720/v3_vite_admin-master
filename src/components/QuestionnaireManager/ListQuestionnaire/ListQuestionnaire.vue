@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
+  <div class="list-container">
     <el-table
       :data="data"
-      height="550px"
       stripe
+      highlight-current-row
     >
       <el-table-column
         type="index"
@@ -25,7 +25,7 @@
         align="center"
       />
       <el-table-column
-        label="最后修改时间"
+        label="更新日期"
         prop="lastUpdateDate"
         align="center"
       />
@@ -93,7 +93,10 @@ defineEmits(['edit', 'view'])
 <style lang="scss" scoped>
 @import "../style";
 
-.container {
+.list-container {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  box-sizing: border-box;
   background: #fff;
   margin: 10px;
   box-shadow: $q-box-shadow-normal;

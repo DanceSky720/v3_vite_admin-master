@@ -31,7 +31,7 @@
           <span class="col">选项标题</span>
           <span class="col">选项说明</span>
           <span class="col">分数</span>
-          <span class="col col-last">操作</span>
+          <span class="col">操作</span>
         </p>
         <TransitionGroup
           name="fade"
@@ -60,7 +60,7 @@
               type="number"
               placeholder="请输入分数"
             />
-            <div class="col-last">
+            <div class="col">
               <el-button
                 :icon="ArrowUpBold"
                 circle
@@ -113,7 +113,7 @@ const questionnaireSubject = reactive({
 const emit = defineEmits(['update:modelValue'])
 
 /**
- * 题目项目是否大于2的阴影
+ * 题目项目阴影
  * @param subject 题目
  */
  function shadow (subject: QuestionnaireSubject) {
@@ -122,7 +122,7 @@ const emit = defineEmits(['update:modelValue'])
     return normal
   }
   if(subject.type === 'checkbox' || 'radio') {
-    return subject.options.length > 0 ? normal : '0px 0px 6px #F56C6C' 
+    return subject.options.length > 0 ? normal : '0px 0px 12px #FFBDBD' 
   }
 }
 
@@ -227,7 +227,7 @@ function remove(index: number) {
 
 .transition-group {
   transition: all 0.8s;
-  background: #cecece;
+  background: #D3D3D3;
 }
 
 .row > .col {
@@ -235,15 +235,11 @@ function remove(index: number) {
   padding: 8px;
   font-size: 16px;
   text-align: left;
-  background: #cecece;
+  background: #D3D3D3;
   color: #303030;
   font-weight: bold;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
     'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-}
-
-.row > .col-last {
-  flex: 2;
 }
 
 .fade-move,
