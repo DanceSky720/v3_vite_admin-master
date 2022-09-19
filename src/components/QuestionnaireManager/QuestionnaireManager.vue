@@ -20,7 +20,7 @@
       />
     </div>
     <QuestionnaireDesigner
-      v-model="questionnaire.data"
+      v-model="questionnaireList.data[active]"
       class="preview"
       preview
     />
@@ -127,9 +127,9 @@ function edit(index: number) {
   show.value = true
 }
 /**
- * 创建空问卷
+ * 重置组件数据
  */
-function createQuestionnaire() {
+function reborn(){
   questionnaire.data = {
     id: undefined,
     title: undefined,
@@ -142,6 +142,12 @@ function createQuestionnaire() {
     type: undefined,
     subjectList: []
   }
+}
+/**
+ * 创建空问卷
+ */
+function createQuestionnaire() {
+  reborn()
   show.value = true
 }
 /**
@@ -156,6 +162,7 @@ function save() {
  */
 function close() {
   show.value = false
+  reborn()
   active.value = 0
   emit('reload')
 }
