@@ -46,6 +46,8 @@ defineEmits(['reload', 'create', 'query'])
 </script>
 
 <style lang="scss" scoped>
+@import "../style";
+
 .bar-container {
   box-sizing: border-box;
   height: 60px;
@@ -55,8 +57,8 @@ defineEmits(['reload', 'create', 'query'])
   align-items: center;
   justify-content: space-between;
   background: #fff;
-  border-radius: 4px;
-  box-shadow: 0px 0px 6px rgb(226, 226, 226);
+  border-radius: $q-border-radius-small;
+  box-shadow: $q-box-shadow-normal;
 }
 
 .bar-input {

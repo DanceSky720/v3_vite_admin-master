@@ -91,11 +91,12 @@ defineEmits(['edit', 'view'])
 </script>
 
 <style lang="scss" scoped>
+@import "../style";
 
 .container {
   background: #fff;
   margin: 10px;
-  box-shadow: 0px 0px 6px rgb(226, 226, 226);
+  box-shadow: $q-box-shadow-normal;
 }
 
 .list-btn {

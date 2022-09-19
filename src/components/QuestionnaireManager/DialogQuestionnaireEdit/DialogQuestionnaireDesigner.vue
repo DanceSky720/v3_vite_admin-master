@@ -7,7 +7,7 @@
   >
     <div class="dialog-container">
       <ComponentSelector @chosen="addSubject" />
-      <PreviewOrEdit
+      <QuestionnaireDesigner
         v-model="questionnaire.data"
         :questionnaire-type="questionnaireType"
         @save="$emit('save')"
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { PropType, reactive, ref, watch } from 'vue'
 import ComponentSelector from '../ComponentSelector/ComponentSelector.vue'
-import PreviewOrEdit from '../PreviewOrEdit/PreviewOrEdit.vue'
+import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import { ElMessageBox } from 'element-plus'
 
 const props = defineProps({

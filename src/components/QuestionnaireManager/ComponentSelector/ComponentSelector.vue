@@ -32,15 +32,18 @@ defineEmits(['chosen'])
 </script>
 
 <style lang="scss" scoped>
+@import "../style";
+
 .selector-container {
   min-width: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: $q-border-radius-normal;
   margin: 20px;
   padding: 16px 8px;
   background: #fff;
-  box-shadow: 0px 0px 6px rgb(226, 226, 226);
+  box-shadow: $q-box-shadow-normal;
   transition: all;
 }
 

@@ -1,4 +1,4 @@
-# PanelTopicEditor 题目选项编辑面板
+# PanelTopicDesigner 题目选项设计面板
 
 ## 1. 介绍 🤔
 

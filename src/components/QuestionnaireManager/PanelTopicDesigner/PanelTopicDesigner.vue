@@ -1,6 +1,9 @@
 <template>
-  <div class="edit-container">
+  <div class="edit-container"
+    :style="{boxShadow: shadow(questionnaireSubject.data)}"
+  >
     <el-button
+      v-if="questionnaireSubject.data.type === 'checkbox' || 'radio'"
       class="add-btn"
       type="primary"
       :disabled="!allow"
@@ -95,7 +98,7 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<QuestionnaireSubject>,
-    default: undefined
+    default: null
   }
 })
 
@@ -108,6 +111,20 @@ const questionnaireSubject = reactive({
 // TODO 为没有唯一值的options寻找唯一值
 
 const emit = defineEmits(['update:modelValue'])
+
+/**
+ * 题目项目是否大于2的阴影
+ * @param subject 题目
+ */
+ function shadow (subject: QuestionnaireSubject) {
+  const normal = '0px 0px 6px rgb(226, 226, 226)'
+  if(subject.type === 'input'){
+    return normal
+  }
+  if(subject.type === 'checkbox' || 'radio') {
+    return subject.options.length > 0 ? normal : '0px 0px 6px #F56C6C' 
+  }
+}
 
 /**
  * 是否允许添加新的选项
@@ -124,11 +141,8 @@ const allow = computed(() => {
 })
 
 watch(() => props.modelValue, (modelValue) => {
-  if (modelValue) {
     questionnaireSubject.data = modelValue
-  }
-},
-{ immediate: true }
+},{ immediate: true }
 )
 
 watch(questionnaireSubject.data, (newValue) => {
@@ -179,11 +193,14 @@ function remove(index: number) {
 </script>
 
 <style lang="scss" scoped>
+  @import "../style";
+
 .edit-container {
   padding: 4px 20px;
-  min-width: 440px;
+  margin: 20px 0;
   background-color: #f0f0f0;
-  border-radius: 6px;
+  border-radius: $q-border-radius-normal;
+  transition: $q-transition-speed1;
 }
 
 .edit-area {
@@ -191,7 +208,7 @@ function remove(index: number) {
   flex-direction: column;
   margin: 10px 0;
   padding: 20px;
-  border-radius: 6px;
+  border-radius: $q-border-radius-normal;
   background-color: rgb(226, 226, 226);
   clear: both;
   transition: all 18s;

@@ -19,12 +19,12 @@
         :total="questionnaireList.data.length"
       />
     </div>
-    <PreviewOrEdit
+    <QuestionnaireDesigner
       v-model="questionnaire.data"
       class="preview"
       preview
     />
-    <DialogQuestionnaireEdit
+    <DialogQuestionnaireDesigner
       v-model="questionnaire.data"
       v-model:show="show"
       :questionnaire-type="questionnaireType"
@@ -35,9 +35,9 @@
 </template>
 
 <script setup lang="ts">
-import DialogQuestionnaireEdit from './DialogQuestionnaireEdit/DialogQuestionnaireEdit.vue'
+import DialogQuestionnaireDesigner from './DialogQuestionnaireEdit/DialogQuestionnaireDesigner.vue'
+import QuestionnaireDesigner from './QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'
-import PreviewOrEdit from './PreviewOrEdit/PreviewOrEdit.vue'
 import { PropType, reactive, ref, watch } from 'vue'
 import OperateBar from './OperateBar/OperateBar.vue'
 import { cloneDeep } from 'lodash-es'

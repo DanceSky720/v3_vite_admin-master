@@ -1,4 +1,4 @@
-# DialogQuestionnaireEdit 问卷编辑对话框
+# DialogQuestionnaireDesigner 问卷编辑对话框
 
 ## 1. 介绍 🤔
 

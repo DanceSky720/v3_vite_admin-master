@@ -90,6 +90,7 @@
       <div
         v-for="(subject, index) in questionnaire.data.subjectList"
         :key="subject.id"
+        :style="{boxShadow: shadow(subject)}"
         class="subject"
       >
         <div class="subject-title">
@@ -146,7 +147,7 @@
           />
         </div>
         <Transition name="bounce">
-          <PanelTopicEditor
+          <PanelTopicDesigner
             v-if="!preview && open"
             v-model="questionnaire.data.subjectList[index]"
           />
@@ -167,7 +168,7 @@ import {
 } from '@element-plus/icons-vue'
 import { computed, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
-import PanelTopicEditor from '../PanelTopicEditor/PanelTopicEditor.vue'
+import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue';
 const props = defineProps({
   /**
    * 问卷
@@ -210,14 +211,13 @@ const allow = computed(() => {
   const checkArray = [
     hasUniqueTitle(questionnaire.data.subjectList),
     emptyTitle(questionnaire.data.subjectList),
-    emptyOptions(questionnaire.data.subjectList),
-    emptyOptionsTitles(questionnaire.data.subjectList),
     questionnaire.data.subjectList.length > 0,
     questionnaire.data.title ? questionnaire.data.title.length > 0 : false,
     questionnaire.data.type ? questionnaire.data.type.length > 0 : false
   ]
   return checkArray.every((pass: boolean) => pass)
 })
+
 const emit = defineEmits(['update:modelValue', 'save'])
 
 watch(
@@ -279,24 +279,11 @@ function emptyTitle(list: QuestionnaireSubject[]) {
   return list.every((subject: QuestionnaireSubject) => subject.title?.length)
 }
 /**
- * 是否有空选项
- * @param list 要检查的数组
+ * 是否填写题目的阴影
+ * @param subject 题目
  */
-function emptyOptions(list: QuestionnaireSubject[]) {
-  return list.every(
-    (subject: QuestionnaireSubject) => subject.options.length > 0
-  )
-}
-/**
- * 是否有空选项标题
- * @param list 要检查的数组
- */
-function emptyOptionsTitles(list: QuestionnaireSubject[]) {
-  return list.every((subject: QuestionnaireSubject) => {
-    return subject.options.every((option: SubjectOption) =>
-      option.title ? option.title.length > 0 : false
-    )
-  })
+function shadow (subject: QuestionnaireSubject) {
+ return (subject.title || props.preview) ? '0px 0px 6px rgb(226, 226, 226)' : '0px 0px 6px #F56C6C' 
 }
 /**
  * 获取题目类型的翻译
@@ -309,11 +296,16 @@ function subjectType(type: string | undefined) {
   if (type === 'radio') {
     return '单选题'
   }
+  if (type === 'input') {
+    return '主观题'
+  }
   return '未定义'
 }
 </script>
 
 <style lang="scss" scoped>
+@import "../style";
+
 .preview-container {
   position: relative;
   display: flex;
@@ -323,9 +315,9 @@ function subjectType(type: string | undefined) {
   margin: 20px;
   padding: 20px;
   background: #fff;
-  box-shadow: 0px 0px 6px rgb(226, 226, 226);
+  box-shadow: $q-box-shadow-normal;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: $q-border-radius-normal;
   transition: all 0.5s;
 }
 
@@ -353,13 +345,15 @@ function subjectType(type: string | undefined) {
   margin: 18px 0;
   padding: 20px;
   border-radius: 6px;
+  border-width: 1px;
+  border-style: solid;
   border: none;
-  box-shadow: 0px 0px 4px rgb(231, 231, 231);
-  transition: all 0.4s;
+  border-radius: $q-box-shadow-huge;
+  transition: $q-transition-speed0;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0px 0px 20px rgb(199, 199, 199);
+    border-radius: $q-box-shadow-huge;
   }
 }
 

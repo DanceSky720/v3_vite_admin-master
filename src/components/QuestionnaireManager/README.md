@@ -35,10 +35,10 @@ v-model = modelValue / v-model
 * 即使不使用该组件, 也可以分别使用各个小组件重新组合
 * 本项目只需用到 **radio** 和 **checkbox**
 
-1. 题目选项编辑面板 [PanelTopicEditor](./PanelTopicEditor/README.md)
+1. 题目选项设计面板 [PanelTopicDesigner](./PanelTopicDesigner/README.md)
 2. 问卷题目类型选择器 [ComponentSelector](./ComponentSelector/README.md)
-3. 题目编辑面板 [PreviewOrEdit](./PanelTopicEditor/README.md)
-4. 题目编辑弹窗 [DialogQuestionnaireEdit](./DialogQuestionnaireEdit/README.md)
+3. 题目设计面板 [QuestionnaireDesigner](./QuestionnaireDesigner/README.md)
+4. 题目设计弹窗 [DialogQuestionnaireDesigner](./DialogQuestionnaireDesigner/README.md)
 5. 操作栏 [OperateBar](./OperateBar/README.md)
 6. 问卷列表 [ListQuestionnaire](./ListQuestionnaire/README.md)
 7. 问卷管理组件/本组件 [QuestionnaireManager](./README.md)
@@ -46,13 +46,13 @@ v-model = modelValue / v-model
 ```mermaid
 graph BT
 
-    题目选项编辑面板0 --> pe[题目编辑面板0 ]
-    pe --> dialog[题目编辑弹窗]
+    题目选项设计面板 --> pe[题目设计面板0]
+    pe --> dialog[题目设计弹窗]
     问卷题目类型选择器 -->dialog
 
     操作栏 --> manager[问卷管理组件]
     问卷列表 --> manager
-    题目编辑面板1 --> manager
+    题目设计面板 --> manager
     dialog --> manager
 
 ```

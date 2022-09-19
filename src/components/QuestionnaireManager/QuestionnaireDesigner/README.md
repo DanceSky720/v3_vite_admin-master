@@ -1,4 +1,4 @@
-# PreviewOrEdit 问卷预览编辑面板
+# QuestionnaireDesigner 问卷编辑面板
 
 ## 1. 介绍 🤔
 
