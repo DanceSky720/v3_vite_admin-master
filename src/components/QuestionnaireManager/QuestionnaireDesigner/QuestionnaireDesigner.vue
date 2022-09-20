@@ -52,6 +52,7 @@
       </el-form-item>
       <el-input
         v-model="questionnaire.data.details"
+        v-if="!preview"
         class="questionnaire-details"
         :rows="3"
         :disabled="preview"
@@ -177,7 +178,7 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: null
+    default: undefined
   },
   /**
    * 预览模式
@@ -223,7 +224,9 @@ const allow = computed(() => {
 const emit = defineEmits(['update:modelValue', 'save'])
 
 watch(() => props.modelValue, (newValue) => {
-  questionnaire.data = newValue
+  if(newValue){
+      questionnaire.data = newValue
+  }
 }, { immediate: true, deep: true }
 )
 

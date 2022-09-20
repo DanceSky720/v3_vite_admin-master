@@ -12,7 +12,7 @@ v-model 代表 modelValue / v-model
 
 | 参数              | 说明         | 类型    | 默认值    | 引入版本 |
 | ----------------- | ------------ | ------- | --------- | -------- |
-| v-model           | 问卷实体     | object  | null | 0.1.0    |
+| v-model           | 问卷实体     | object  | undefined | 0.1.0    |
 | preview           | 预览模式     | boolean | false     | 0.1.0    |
 | questionnaireType | 问卷类型数组 | array   | []        | 0.1.0    |
 

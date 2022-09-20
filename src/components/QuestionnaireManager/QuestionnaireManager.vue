@@ -49,36 +49,36 @@ const props = defineProps({
    */
   data: {
     type: Object as PropType<Questionnaire[]>,
-    default: null
+    default: undefined,
   },
   /**
    * 保存问卷的方法
    */
   saveFunc: {
     type: Function as PropType<(data: Questionnaire) => void>,
-    default: null
+    default: null,
   },
   /**
    * 当前页
    */
   currentPage: {
     type: Number,
-    default: 1
+    default: 1,
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: []
+    default: [],
   },
   /**
    * 页数
    */
   pageSize: {
     type: Number,
-    default: 10
-  }
+    default: 10,
+  },
 })
 /**
  * 问卷列表
@@ -106,9 +106,11 @@ const emit = defineEmits(['update:currentPage', 'reload', 'query'])
 watch(
   [() => props.data, () => props.currentPage],
   ([data, currentPage]) => {
-    questionnaireList.data = cloneDeep(data)
+    if (data) {
+      questionnaireList.data = cloneDeep(data)
+      questionnaire.data = questionnaireList.data[0]
+    }
     innerCurrentPage.value = currentPage
-    questionnaire.data = questionnaireList.data[0]
   },
   { immediate: true, deep: true }
 )
@@ -139,7 +141,7 @@ function reborn() {
     lastUpdateUserName: undefined,
     lastUpdateDate: undefined,
     type: undefined,
-    subjectList: []
+    subjectList: [],
   }
 }
 /**

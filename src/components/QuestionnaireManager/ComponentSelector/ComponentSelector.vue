@@ -1,19 +1,19 @@
 <template>
   <div class="selector-container">
-    <p class="components-title">
-      添加题目
-    </p>
-    <el-button
-      v-for="item in supportedComponents"
-      :key="item.label"
-      class="btn-selector"
-      :icon="Plus"
-      type="primary"
-      plain
-      @click="$emit('chosen', item.type)"
-    >
-      {{ item.label }}
-    </el-button>
+    <p class="components-title">添加题目</p>
+    <TransitionGroup name="slide" tag="div" class="selector-transition-group">
+      <el-button
+        v-for="(item, index) in supportedComponents.data"
+        :key="item[0]"
+        class="btn-selector"
+        :icon="Plus"
+        type="primary"
+        plain
+        @click="jump(index)"
+      >
+        {{ item[0] }}
+      </el-button>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -24,28 +24,42 @@ import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupp
 /**
  * 支持的题目
  */
-const supportedComponents = reactive([
-  { label: '单项选择', type: QuestionnaireSupportType.RADIO },
-  { label: '多项选择', type: QuestionnaireSupportType.CHECKBOX }
-])
+const supportedComponents = reactive({
+  data: [
+    ['单项选择', QuestionnaireSupportType.RADIO],
+    ['多项选择', QuestionnaireSupportType.CHECKBOX],
+  ],
+})
 
-defineEmits(['chosen'])
+const emit = defineEmits(['chosen'])
+
+function jump(index: number) {
+  const type = supportedComponents.data[index]
+  emit('chosen', supportedComponents.data[index][1])
+  supportedComponents.data.splice(index, 1)
+  window.setTimeout(() => {
+    supportedComponents.data.push(type)
+  }, 1500)
+}
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import '../style';
 
 .selector-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   min-width: 180px;
   padding: 16px 8px;
   margin: 20px;
   background: #fff;
   border-radius: $q-border-radius-normal;
   box-shadow: $q-box-shadow-normal;
+}
+
+.selector-transition-group {
   transition: all;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .components-title {
