@@ -94,7 +94,7 @@ defineEmits(['edit', 'view'])
 @import "../style";
 
 .list-container {
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: none;
   box-sizing: border-box;
   background: #fff;

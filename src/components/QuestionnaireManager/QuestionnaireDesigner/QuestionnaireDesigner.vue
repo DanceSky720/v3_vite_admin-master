@@ -317,7 +317,7 @@ function subjectType(type: string | undefined) {
   padding: 20px;
   background: #fff;
   box-shadow: $q-box-shadow-normal;
-  overflow-y: scroll;
+  overflow-y: auto;
   border-radius: $q-border-radius-normal;
   transition: all 0.5s;
 }
