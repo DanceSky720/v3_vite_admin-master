@@ -9,3 +9,28 @@ $q-box-shadow-huge: 0px 0px 20px rgb(214, 214, 214);
 // 过渡
 $q-transition-speed0: all .4s;
 $q-transition-speed1: all .8s;
+
+// 公共动画 1
+.bounce-enter-active {
+    animation: bounce-in 0.5s;
+}
+
+.bounce-leave-active {
+    animation: bounce-in 0.5s reverse;
+}
+
+@keyframes bounce-in {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

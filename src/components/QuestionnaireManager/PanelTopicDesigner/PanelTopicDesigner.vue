@@ -35,7 +35,7 @@
           <span class="col">操作</span>
         </p>
         <TransitionGroup
-          name="fade"
+          name="bounce"
           tag="div"
           class="transition-group"
         >
@@ -254,15 +254,4 @@ function remove(index: number) {
   background: #d3d3d3;
 }
 
-.fade-move,
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: scaleY(0.4) translate(60px, 0);
-}
 </style>
