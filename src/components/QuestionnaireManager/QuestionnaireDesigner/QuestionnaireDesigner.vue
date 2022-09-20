@@ -40,7 +40,6 @@
         :disabled="preview"
       >
         <el-select
-
           v-model="questionnaire.data.type"
           placeholder="选择问卷类型"
         >
@@ -172,6 +171,7 @@ import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue';
 import { computed, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
 import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity';
+import { useStyleTag } from '@vueuse/core';
 const props = defineProps({
   /**
    * 问卷
