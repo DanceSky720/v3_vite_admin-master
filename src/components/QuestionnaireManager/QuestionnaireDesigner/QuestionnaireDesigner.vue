@@ -26,10 +26,10 @@
           v-model="questionnaire.data.isEnable"
           :disabled="preview"
         >
-          <el-radio :label="1">
+          <el-radio :label="QuestionnaireStatus.ALIVE">
             是
           </el-radio>
-          <el-radio :label="0">
+          <el-radio :label="QuestionnaireStatus.SILENCE">
             否
           </el-radio>
         </el-radio-group>
@@ -171,6 +171,7 @@ import {
 import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue';
 import { computed, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
+import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity';
 const props = defineProps({
   /**
    * 问卷

@@ -41,6 +41,7 @@ import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'
 import { PropType, reactive, ref, watch } from 'vue'
 import OperateBar from './OperateBar/OperateBar.vue'
 import { cloneDeep } from 'lodash-es'
+import { QuestionnaireStatus } from '../../entity/enum/QuestionnaireStatus.entity'
 
 const props = defineProps({
   /**
@@ -133,7 +134,7 @@ function reborn(){
     title: undefined,
     details: undefined,
     totalScore: undefined,
-    isEnable: 1, // 默认启用
+    isEnable: QuestionnaireStatus.ALIVE, // 默认启用
     createDate: undefined,
     lastUpdateUserName: undefined,
     lastUpdateDate: undefined,
