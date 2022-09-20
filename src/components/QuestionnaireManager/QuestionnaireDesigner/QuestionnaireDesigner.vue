@@ -3,9 +3,7 @@
     <p class="title">
       {{ questionnaire.data.title }}
     </p>
-    <el-form
-      inline
-    >
+    <el-form inline>
       <el-form-item
         v-if="!preview"
         class="label-item"
@@ -19,9 +17,10 @@
           clearable
         />
       </el-form-item>
-      <el-form-item     
-        v-if="!preview" 
-        label="是否启用">
+      <el-form-item
+        v-if="!preview"
+        label="是否启用"
+      >
         <el-radio-group
           v-model="questionnaire.data.isEnable"
           :disabled="preview"
@@ -80,7 +79,7 @@
         plain
         @click="open = !open"
       >
-        {{ open ? '关闭' : '展开' }}
+        {{ open ? "关闭" : "展开" }}
       </el-button>
     </div>
     <TransitionGroup
@@ -91,7 +90,7 @@
       <div
         v-for="(subject, index) in questionnaire.data.subjectList"
         :key="subject.id"
-        :style="{boxShadow: shadow(subject)}"
+        :style="{ boxShadow: shadow(subject) }"
         class="subject"
       >
         <div class="subject-title">
@@ -128,7 +127,7 @@
           </div>
         </div>
         <div
-          v-if="subject.type === 'checkbox'"
+          v-if="subject.type === QuestionnaireSupportType.CHECKBOX"
           class="group"
         >
           <el-checkbox
@@ -138,7 +137,7 @@
           />
         </div>
         <div
-          v-if="subject.type === 'radio'"
+          v-if="subject.type === QuestionnaireSupportType.RADIO"
           class="group"
         >
           <el-radio
@@ -160,25 +159,25 @@
 
 <script setup lang="ts">
 import {
-  Delete,
-  ArrowUpBold,
   ArrowDownBold,
-  Open,
+  DocumentAdd,
+  ArrowUpBold,
   TurnOff,
-  DocumentAdd
+  Delete,
+  Open
 } from '@element-plus/icons-vue'
-import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue';
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
+import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 import { computed, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
-import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity';
-import { useStyleTag } from '@vueuse/core';
 const props = defineProps({
   /**
    * 问卷
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: undefined
+    default: null
   },
   /**
    * 预览模式
@@ -223,14 +222,9 @@ const allow = computed(() => {
 
 const emit = defineEmits(['update:modelValue', 'save'])
 
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue) {
-      questionnaire.data = newValue
-    }
-  },
-  { immediate: true, deep: true }
+watch(() => props.modelValue, (newValue) => {
+  questionnaire.data = newValue
+}, { immediate: true, deep: true }
 )
 
 watch(questionnaire.data, (newValue) => {
@@ -285,21 +279,23 @@ function emptyTitle(list: QuestionnaireSubject[]) {
  * 是否填写题目的阴影
  * @param subject 题目
  */
-function shadow (subject: QuestionnaireSubject) {
- return (subject.title || props.preview) ? '0px 0px 6px rgb(226, 226, 226)' : '0px 0px 6px #F56C6C' 
+function shadow(subject: QuestionnaireSubject) {
+  return subject.title || props.preview
+    ? '0px 0px 6px rgb(226, 226, 226)'
+    : '0px 0px 6px #F56C6C'
 }
 /**
  * 获取题目类型的翻译
  * @param type 题目类型
  */
 function subjectType(type: string | undefined) {
-  if (type === 'checkbox') {
+  if (type === QuestionnaireSupportType.CHECKBOX) {
     return '多选题'
   }
-  if (type === 'radio') {
+  if (type === QuestionnaireSupportType.RADIO) {
     return '单选题'
   }
-  if (type === 'input') {
+  if (type === QuestionnaireSupportType.INPUT) {
     return '主观题'
   }
   return '未定义'
@@ -311,23 +307,23 @@ function subjectType(type: string | undefined) {
 
 .preview-container {
   position: relative;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  margin: 20px;
   padding: 20px;
-  background: #fff;
-  box-shadow: $q-box-shadow-normal;
+  margin: 20px;
   overflow-y: auto;
+  background: #fff;
   border-radius: $q-border-radius-normal;
+  box-shadow: $q-box-shadow-normal;
   transition: all 0.5s;
 }
 
 .title {
   margin: 20px 0;
-  text-align: center;
-  font-weight: bold;
   font-size: 30px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .title-input {
@@ -344,18 +340,18 @@ function subjectType(type: string | undefined) {
 }
 
 .subject {
-  margin: 18px 0;
   padding: 20px;
-  border-radius: 6px;
-  border-width: 1px;
-  border-style: solid;
+  margin: 18px 0;
   border: none;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 6px;
   border-radius: $q-box-shadow-huge;
   transition: $q-transition-speed0;
 
   &:hover {
-    transform: translateY(-5px);
     border-radius: $q-box-shadow-huge;
+    transform: translateY(-5px);
   }
 }
 
@@ -377,8 +373,8 @@ function subjectType(type: string | undefined) {
 
 .btn-group {
   display: flex;
-  padding: 0 20px;
   flex-direction: row-reverse;
+  padding: 0 20px;
 }
 
 .bounce-enter-active {
@@ -391,8 +387,8 @@ function subjectType(type: string | undefined) {
 
 @keyframes bounce-in {
   0% {
-    transform: translateY(0);
     opacity: 0;
+    transform: translateY(0);
   }
 
   50% {
@@ -400,8 +396,8 @@ function subjectType(type: string | undefined) {
   }
 
   100% {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

@@ -1,9 +1,10 @@
 <template>
-  <div class="edit-container"
-    :style="{boxShadow: shadow(questionnaireSubject.data)}"
+  <div
+    class="edit-container"
+    :style="{ boxShadow: shadow(questionnaireSubject.data) }"
   >
     <el-button
-      v-if="questionnaireSubject.data.type === 'checkbox' || 'radio'"
+      v-if="selective"
       class="add-btn"
       type="primary"
       :disabled="!allow"
@@ -25,7 +26,7 @@
           />
         </el-form-item>
         <p
-          v-if="questionnaireSubject.data.type === 'checkbox' || 'radio'"
+          v-if="selective"
           class="row"
         >
           <span class="col">选项标题</span>
@@ -89,6 +90,7 @@
 </template>
 
 <script setup lang="ts">
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import { Delete, ArrowUpBold, ArrowDownBold } from '@element-plus/icons-vue'
 import { computed, PropType, reactive, watch } from 'vue'
 import util from '../util'
@@ -106,9 +108,18 @@ const props = defineProps({
  * 题目
  */
 const questionnaireSubject = reactive({
-  data: { } as QuestionnaireSubject
+  data: {} as QuestionnaireSubject
 })
 // TODO 为没有唯一值的options寻找唯一值
+/**
+ * 是否是选择型
+ */
+const selective = computed(() => {
+  return (
+    questionnaireSubject.data.type === QuestionnaireSupportType.CHECKBOX ||
+    QuestionnaireSupportType.RADIO
+  )
+})
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -116,13 +127,13 @@ const emit = defineEmits(['update:modelValue'])
  * 题目项目阴影
  * @param subject 题目
  */
- function shadow (subject: QuestionnaireSubject) {
+function shadow(subject: QuestionnaireSubject) {
   const normal = '0px 0px 6px rgb(226, 226, 226)'
-  if(subject.type === 'input'){
+  if (subject.type === QuestionnaireSupportType.INPUT) {
     return normal
   }
-  if(subject.type === 'checkbox' || 'radio') {
-    return subject.options.length > 0 ? normal : '0px 0px 12px #FFBDBD' 
+  if (selective.value) {
+    return subject.options.length > 0 ? normal : '0px 0px 12px #FFBDBD'
   }
 }
 
@@ -130,19 +141,22 @@ const emit = defineEmits(['update:modelValue'])
  * 是否允许添加新的选项
  */
 const allow = computed(() => {
-  const isTitle = questionnaireSubject.data.options.every(
+  const hasTitle = questionnaireSubject.data.options.every(
     (option: SubjectOption) => option.title !== ''
   )
   const checkArray: Array<boolean> = [
-    isTitle,
+    hasTitle,
     questionnaireSubject.data.options.length < 4
   ]
   return checkArray.every((pass: boolean) => pass)
 })
 
-watch(() => props.modelValue, (modelValue) => {
+watch(
+  () => props.modelValue,
+  (modelValue) => {
     questionnaireSubject.data = modelValue
-},{ immediate: true }
+  },
+  { immediate: true }
 )
 
 watch(questionnaireSubject.data, (newValue) => {
@@ -193,7 +207,7 @@ function remove(index: number) {
 </script>
 
 <style lang="scss" scoped>
-  @import "../style";
+@import "../style";
 
 .edit-container {
   padding: 4px 20px;
@@ -206,17 +220,17 @@ function remove(index: number) {
 .edit-area {
   display: flex;
   flex-direction: column;
-  margin: 10px 0;
   padding: 20px;
-  border-radius: $q-border-radius-normal;
-  background-color: rgb(226, 226, 226);
+  margin: 10px 0;
   clear: both;
+  background-color: #e2e2e2;
+  border-radius: $q-border-radius-normal;
   transition: all 18s;
 }
 
 .add-btn {
-  margin: 10px 0;
   float: right;
+  margin: 10px 0;
 }
 
 .row {
@@ -226,20 +240,18 @@ function remove(index: number) {
 }
 
 .transition-group {
+  background: #d3d3d3;
   transition: all 0.8s;
-  background: #D3D3D3;
 }
 
 .row > .col {
   flex: 1;
   padding: 8px;
   font-size: 16px;
-  text-align: left;
-  background: #D3D3D3;
-  color: #303030;
   font-weight: bold;
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
-    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  color: #303030;
+  text-align: left;
+  background: #d3d3d3;
 }
 
 .fade-move,

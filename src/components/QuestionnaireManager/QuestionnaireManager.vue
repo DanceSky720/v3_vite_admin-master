@@ -37,11 +37,11 @@
 <script setup lang="ts">
 import DialogQuestionnaireDesigner from './DialogQuestionnaireEdit/DialogQuestionnaireDesigner.vue'
 import QuestionnaireDesigner from './QuestionnaireDesigner/QuestionnaireDesigner.vue'
+import { QuestionnaireStatus } from '../../entity/enum/QuestionnaireStatus.entity'
 import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'
 import { PropType, reactive, ref, watch } from 'vue'
 import OperateBar from './OperateBar/OperateBar.vue'
 import { cloneDeep } from 'lodash-es'
-import { QuestionnaireStatus } from '../../entity/enum/QuestionnaireStatus.entity'
 
 const props = defineProps({
   /**
@@ -128,7 +128,7 @@ function edit(index: number) {
 /**
  * 重置组件数据
  */
-function reborn(){
+function reborn() {
   questionnaire.data = {
     id: undefined,
     title: undefined,
@@ -169,14 +169,14 @@ function close() {
 
 <style lang="scss" scoped>
 .manager-container {
-  margin-top: 10px;
   display: flex;
+  margin-top: 10px;
   background: white;
 
   .left {
     position: relative;
-    flex: 2;
     display: flex;
+    flex: 2;
     flex-direction: column;
   }
 

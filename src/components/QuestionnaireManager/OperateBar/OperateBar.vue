@@ -50,12 +50,12 @@ defineEmits(['reload', 'create', 'query'])
 
 .bar-container {
   box-sizing: border-box;
-  height: 60px;
-  margin: 10px;
-  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 60px;
+  padding: 10px;
+  margin: 10px;
   background: #fff;
   border-radius: $q-border-radius-small;
   box-shadow: $q-box-shadow-normal;

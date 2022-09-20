@@ -17,29 +17,30 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, reactive, ref, watch } from 'vue'
-import ComponentSelector from '../ComponentSelector/ComponentSelector.vue'
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
+import ComponentSelector from '../ComponentSelector/ComponentSelector.vue'
+import { PropType, reactive, ref, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
 
 const props = defineProps({
   /**
-   * 问卷
-   */
+     * 问卷
+     */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: undefined
+    default: null
   },
   /**
-   * 显隐控制
-   */
+     * 显隐控制
+     */
   show: {
     type: Boolean,
     default: false
   },
   /**
-   * 问卷类型数组
-   */
+     * 问卷类型数组
+     */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
     default: []
@@ -47,26 +48,23 @@ const props = defineProps({
 })
 
 /**
- * 问卷
- */
+   * 问卷
+   */
 const questionnaire = reactive({
   data: {} as Questionnaire
 })
 /**
- * 显隐控制
- */
+   * 显隐控制
+   */
 const open = ref(false)
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
 watch(
   [() => props.modelValue, () => props.show],
   ([modelValue, show]) => {
-    if (modelValue) {
-      questionnaire.data = modelValue
-    }
+    questionnaire.data = modelValue
     open.value = show
-  },
-  { immediate: true, deep: true }
+  }, { immediate: true, deep: true }
 )
 
 watch(questionnaire.data, (newValue) => {
@@ -77,9 +75,9 @@ watch(open, (newValue) => {
   emit('update:show', newValue)
 })
 /**
- * 添加一个问卷项目
- */
-function addSubject(type: string) {
+   * 添加一个问卷项目
+   */
+function addSubject(type: QuestionnaireSupportType) {
   questionnaire.data.subjectList.push({
     id: new Date().getTime().toString(),
     title: undefined,
@@ -89,8 +87,8 @@ function addSubject(type: string) {
   })
 }
 /**
- * 关闭前处理函数
- */
+   * 关闭前处理函数
+   */
 async function handleClose() {
   try {
     const res = await ElMessageBox.confirm(
@@ -111,9 +109,9 @@ async function handleClose() {
 }
 </script>
 
-<style lang="scss" scoped>
-.dialog-container {
-  display: flex;
-  transition: all 1s;
-}
-</style>
+  <style lang="scss" scoped>
+  .dialog-container {
+    display: flex;
+    transition: all 1s;
+  }
+  </style>

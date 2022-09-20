@@ -20,12 +20,13 @@
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 /**
  * 支持的题目
  */
 const supportedComponents = reactive([
-  { label: '单项选择', type: 'radio' },
-  { label: '多项选择', type: 'checkbox' }
+  { label: '单项选择', type: QuestionnaireSupportType.RADIO },
+  { label: '多项选择', type: QuestionnaireSupportType.CHECKBOX }
 ])
 
 defineEmits(['chosen'])
@@ -35,23 +36,23 @@ defineEmits(['chosen'])
 @import "../style";
 
 .selector-container {
-  min-width: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: $q-border-radius-normal;
-  margin: 20px;
+  min-width: 180px;
   padding: 16px 8px;
+  margin: 20px;
   background: #fff;
+  border-radius: $q-border-radius-normal;
   box-shadow: $q-box-shadow-normal;
   transition: all;
 }
 
 .components-title {
   margin-bottom: 20px;
-  text-align: center;
-  font-weight: bold;
   font-size: 26px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .btn-selector {

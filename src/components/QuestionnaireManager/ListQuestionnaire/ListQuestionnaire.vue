@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
 import { Edit, Search } from '@element-plus/icons-vue'
 import { PropType } from 'vue'
 defineProps({
@@ -82,8 +83,10 @@ defineProps({
  */
 const enableCell = (isEnable: number) => {
   return {
-    color: { color: isEnable === 1 ? '#67C23A' : '#F56C6C' },
-    text: isEnable === 1 ? '启用' : '停用'
+    color: {
+      color: isEnable === QuestionnaireStatus.ALIVE ? '#67C23A' : '#F56C6C'
+    },
+    text: isEnable === QuestionnaireStatus.ALIVE ? '启用' : '停用'
   }
 }
 
@@ -94,11 +97,11 @@ defineEmits(['edit', 'view'])
 @import "../style";
 
 .list-container {
+  box-sizing: border-box;
+  margin: 10px;
   overflow-y: auto;
   scrollbar-width: none;
-  box-sizing: border-box;
   background: #fff;
-  margin: 10px;
   box-shadow: $q-box-shadow-normal;
 }
 
