@@ -30,7 +30,7 @@
 
 ### 1. 组件树
 
-* 即使不使用该组件, 也可以分别使用各个小组件重新组合
+* 即使不使用该组件, 也可以分别使用各个小组件
 * 本项目只需用到 **radio** 和 **checkbox**
 
 1. 题目选项设计面板 [PanelTopicDesigner](./PanelTopicDesigner/README.md)
@@ -44,13 +44,14 @@
 ```mermaid
 graph BT
 
-    题目选项设计面板 --> qd[题目设计面板]
+    题目选项设计面板0 --> qd[题目设计面板]
     qd --> dialog[题目设计弹窗]
     问卷题目类型选择器 -->dialog
 
+    题目选项设计面板 -->题目设计面板
     操作栏 --> manager[问卷管理组件]
     问卷列表 --> manager
-    qd --> manager
+    题目设计面板 --> manager
     dialog --> manager
 
 ```
