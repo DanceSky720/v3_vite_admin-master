@@ -343,14 +343,11 @@ function subjectType(type: string | undefined) {
   padding: 20px;
   margin: 18px 0;
   border: none;
-  border-style: solid;
-  border-width: 1px;
   border-radius: 6px;
-  border-radius: $q-box-shadow-huge;
+  box-shadow: $q-box-shadow-normal;
   transition: $q-transition-speed0;
 
   &:hover {
-    border-radius: $q-box-shadow-huge;
     transform: translateY(-5px);
   }
 }
