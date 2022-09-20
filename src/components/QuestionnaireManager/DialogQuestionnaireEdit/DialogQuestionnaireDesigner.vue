@@ -24,21 +24,21 @@ import { PropType, reactive, ref, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
 
 const props = defineProps({
-  /**
+   /**
     * 问卷
     */
   modelValue: {
     type: Object as PropType<Questionnaire>,
     default: null
   },
-  /**
+   /**
     * 显隐控制
     */
   show: {
     type: Boolean,
     default: false
   },
-  /**
+   /**
     * 问卷类型数组
     */
   questionnaireType: {
@@ -47,13 +47,13 @@ const props = defineProps({
   }
 })
 
- /**
+  /**
    * 问卷
    */
 const questionnaire = reactive({
   data: {} as Questionnaire
 })
- /**
+  /**
    * 显隐控制
    */
 const open = ref(false)
