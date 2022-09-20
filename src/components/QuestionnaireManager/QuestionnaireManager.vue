@@ -116,14 +116,12 @@ watch(innerCurrentPage, (newValue) => {
   emit('update:currentPage', newValue)
 })
 
-watch(active, (newValue) => {
-  questionnaire.data = questionnaireList.data[newValue]
-})
 /**
  * 编辑按钮点击事件
  */
 function edit(index: number) {
   active.value = index
+  questionnaire.data = questionnaireList.data[active.value]
   show.value = true
 }
 /**
