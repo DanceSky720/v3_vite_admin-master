@@ -33,6 +33,10 @@ const supportedComponents = reactive({
 
 const emit = defineEmits(['chosen'])
 
+/**
+ * 提交选择事件
+ * @param index 选中的下标
+ */
 function jump(index: number) {
   const type = supportedComponents.data[index]
   emit('chosen', supportedComponents.data[index][1])
