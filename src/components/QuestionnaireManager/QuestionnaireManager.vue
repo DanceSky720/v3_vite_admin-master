@@ -155,16 +155,16 @@ function createQuestionnaire() {
  * 保存按钮点击
  */
 function save() {
-  show.value = false
   props.saveFunc(questionnaire.data)
+  show.value = false
 }
 /**
  * 编辑弹窗关闭
  */
 function close() {
   show.value = false
-  reborn()
   active.value = 0
+  reborn()
   emit('reload')
 }
 </script>
