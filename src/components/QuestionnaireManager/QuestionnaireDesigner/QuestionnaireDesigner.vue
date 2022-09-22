@@ -1,5 +1,5 @@
 <template>
-  <div class="preview-container">
+  <div class="questionnaire-designer-container">
     <p class="title">
       {{ questionnaire.data.title }}
     </p>
@@ -14,7 +14,6 @@
           class="title-input"
           show-word-limit
           placeholder="请输入问卷名"
-          clearable
         />
       </el-form-item>
       <el-form-item
@@ -25,10 +24,14 @@
           v-model="questionnaire.data.isEnable"
           :disabled="preview"
         >
-          <el-radio :label="QuestionnaireStatus.ALIVE">
+          <el-radio
+            :label="QuestionnaireStatus.ALIVE"
+          >
             是
           </el-radio>
-          <el-radio :label="QuestionnaireStatus.SILENCE">
+          <el-radio
+            :label="QuestionnaireStatus.SILENCE"
+          >
             否
           </el-radio>
         </el-radio-group>
@@ -51,8 +54,8 @@
         </el-select>
       </el-form-item>
       <el-input
-        v-model="questionnaire.data.details"
         v-if="!preview"
+        v-model="questionnaire.data.details"
         class="questionnaire-details"
         :rows="3"
         :disabled="preview"
@@ -84,9 +87,13 @@
       </el-button>
     </div>
     <TransitionGroup
+      id="questionnaire-designer-transition-group"
+      :class="preview ? '' : 'questionnaire-designer-transition-group'"
       name="bounce"
       tag="div"
-      class="transition-group"
+      @dragenter="dragenter($event)"
+      @dragover="$event.preventDefault()"
+      @dragleave="dragleave($event)"
     >
       <div
         v-for="(subject, index) in questionnaire.data.subjectList"
@@ -105,7 +112,10 @@
             </span>
             <span> ({{ subjectType(subject.type) }}) </span>
           </p>
-          <div v-if="!preview">
+          <div
+            v-if="!preview"
+            class="action-btn-ground"
+          >
             <el-button
               :icon="ArrowUpBold"
               circle
@@ -221,13 +231,21 @@ const allow = computed(() => {
   return checkArray.every((pass: boolean) => pass)
 })
 
-const emit = defineEmits(['update:modelValue', 'save'])
+const emit = defineEmits([
+  'update:modelValue',
+  'save',
+  'addSubject',
+  'removeSubject'
+])
 
-watch(() => props.modelValue, (newValue) => {
-  if(newValue){
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
       questionnaire.data = newValue
-  }
-}, { immediate: true, deep: true }
+    }
+  },
+  { immediate: true, deep: true }
 )
 
 watch(questionnaire.data, (newValue) => {
@@ -279,7 +297,7 @@ function emptyTitle(list: QuestionnaireSubject[]) {
   return list.every((subject: QuestionnaireSubject) => subject.title?.length)
 }
 /**
- * 是否填写题目的阴影
+ * 题目的阴影
  * @param subject 题目
  */
 function shadow(subject: QuestionnaireSubject) {
@@ -287,6 +305,27 @@ function shadow(subject: QuestionnaireSubject) {
     ? '0px 0px 6px rgb(226, 226, 226)'
     : '0px 0px 6px #F56C6C'
 }
+/**
+ * 拖拽进入该组件时,添加题目事件
+ * @param event 拖拽事件
+ */
+function dragenter(event: DragEvent) {
+  const id = (event.target as HTMLDivElement).id
+  if (id === 'questionnaire-designer-transition-group' ) {
+    emit('addSubject')
+  }
+}
+/**
+ * 拖拽离开该组件时,移除题目事件
+ * @param event 拖拽事件
+ */
+function dragleave(event: DragEvent) {
+  const id = (event.target as HTMLDivElement).id
+  if (id ==='questionnaire-designer-transition-group') {
+    emit('removeSubject')
+  }
+}
+
 /**
  * 获取题目类型的翻译
  * @param type 题目类型
@@ -308,8 +347,7 @@ function subjectType(type: string | undefined) {
 <style lang="scss" scoped>
 @import "../style";
 
-.preview-container {
-  position: relative;
+.questionnaire-designer-container {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -320,6 +358,35 @@ function subjectType(type: string | undefined) {
   border-radius: $q-border-radius-normal;
   box-shadow: $q-box-shadow-normal;
   transition: all 0.5s;
+}
+
+.action-btn-ground {
+  pointer-events: all;
+}
+
+.questionnaire-designer-transition-group {
+  position: relative;
+  margin-top: 20px;
+  min-height: 200px;
+  border: 1px dashed rgb(150, 150, 150);
+  border-radius: $q-border-radius-normal;
+}
+
+.questionnaire-designer-transition-group > * {
+  pointer-events: none;
+}
+
+.questionnaire-designer-transition-group::before {
+  position: absolute;
+  content: "点击左侧或拖拽到这里";
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  height: 20px;
+  box-sizing: border-box;
+  color: rgb(148, 148, 148);
+  transform: translate(-50%, -50%);
 }
 
 .title {
@@ -345,6 +412,7 @@ function subjectType(type: string | undefined) {
 .subject {
   padding: 20px;
   margin: 18px 0;
+  background: #fff;
   border: none;
   border-radius: 6px;
   box-shadow: $q-box-shadow-normal;
@@ -376,6 +444,4 @@ function subjectType(type: string | undefined) {
   flex-direction: row-reverse;
   padding: 0 20px;
 }
-
-
 </style>

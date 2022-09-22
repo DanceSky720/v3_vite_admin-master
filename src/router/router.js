@@ -52,6 +52,12 @@ const layoutMap = [
                 name: "v2Test",
                 meta: { title: "v2测试" },
                 component: () => import("../views/test/v2/index.vue")
+            },
+            {
+                path: "v3",
+                name: "v3Test",
+                meta: { title: "v3测试" },
+                component: () => import("../views/test/v3/index.vue")
             }
         ]
     },

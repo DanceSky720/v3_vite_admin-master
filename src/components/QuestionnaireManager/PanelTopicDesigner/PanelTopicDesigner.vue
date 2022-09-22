@@ -215,6 +215,7 @@ function remove(index: number) {
   background-color: #f0f0f0;
   border-radius: $q-border-radius-normal;
   transition: $q-transition-speed1;
+  pointer-events: all;
 }
 
 .edit-area {
@@ -253,5 +254,4 @@ function remove(index: number) {
   text-align: left;
   background: #d3d3d3;
 }
-
 </style>

@@ -6,11 +6,16 @@
     :before-close="handleClose"
   >
     <div class="dialog-container">
-      <ComponentSelector @chosen="addSubject" />
+      <ComponentSelector
+        v-model="dragValue"
+        @chosen="addSubject"
+      />
       <QuestionnaireDesigner
         v-model="questionnaire.data"
         :questionnaire-type="questionnaireType"
         @save="$emit('save')"
+        @add-subject="addSubject(dragValue as QuestionnaireSupportType)"
+        @remove-subject="removeSubject"
       />
     </div>
   </el-dialog>
@@ -29,34 +34,38 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: null,
+    default: null
   },
   /**
    * 显隐控制
    */
   show: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: [],
-  },
+    default: []
+  }
 })
 
 /**
  * 问卷
  */
 const questionnaire = reactive({
-  data: {} as Questionnaire,
+  data: {} as Questionnaire
 })
 /**
  * 显隐控制
  */
 const open = ref(false)
+/**
+ * 拖拽的题目类型
+ */
+const dragValue = ref('')
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
 watch(
@@ -84,8 +93,17 @@ function addSubject(type: QuestionnaireSupportType) {
     title: undefined,
     serialNumber: undefined,
     type: type,
-    options: [],
+    options: []
   })
+}
+/**
+ * 移除最后一个题目
+*/
+function removeSubject() {
+  questionnaire.data.subjectList.splice(
+    questionnaire.data.subjectList.length - 1,
+    1
+  )
 }
 /**
  * 关闭前处理函数
@@ -98,7 +116,7 @@ async function handleClose() {
       {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
+        type: 'warning'
       }
     )
     if (res === 'confirm') {
@@ -111,7 +129,6 @@ async function handleClose() {
 </script>
 
 <style lang="scss" scoped>
-
 .dialog-container {
   display: flex;
   transition: all 1s;

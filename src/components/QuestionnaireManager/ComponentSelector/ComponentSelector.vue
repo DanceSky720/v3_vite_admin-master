@@ -1,15 +1,24 @@
 <template>
   <div class="selector-container">
-    <p class="components-title">添加题目</p>
-    <TransitionGroup name="slide" tag="div" class="selector-transition-group">
+    <p class="components-title">
+      添加题目
+    </p>
+    <TransitionGroup
+      name="slide"
+      tag="div"
+      class="selector-transition-group"
+    >
       <el-button
         v-for="(item, index) in supportedComponents.data"
         :key="item[0]"
+        draggable="true"
         class="btn-selector"
-        :icon="Plus"
+        :icon="Rank"
         type="primary"
         plain
-        @click="jump(index)"
+        @dragstart="dragValue = item[1]"
+        @dragend="submit(index, false)"
+        @click="submit(index, true)"
       >
         {{ item[0] }}
       </el-button>
@@ -18,28 +27,51 @@
 </template>
 
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import { Rank } from '@element-plus/icons-vue'
+import { reactive, ref, watch } from 'vue'
+const props = defineProps({
+  /**
+   * 类型
+   */
+  modelValue: {
+    type: String,
+    default: null
+  }
+})
 /**
  * 支持的题目
  */
 const supportedComponents = reactive({
   data: [
     ['单项选择', QuestionnaireSupportType.RADIO],
-    ['多项选择', QuestionnaireSupportType.CHECKBOX],
-  ],
+    ['多项选择', QuestionnaireSupportType.CHECKBOX]
+  ]
 })
+/**
+ * 拖拽的题目类型
+ */
+const dragValue = ref('')
+const emit = defineEmits(['chosen', 'update:modelValue'])
 
-const emit = defineEmits(['chosen'])
+watch(() => props.modelValue, (newValue) => {
+    dragValue.value = newValue
+  }
+)
+watch(dragValue, (newValue) => {
+  emit('update:modelValue', newValue)
+})
 
 /**
  * 提交选择事件
  * @param index 选中的下标
+ * @param submit 是否提交事件
  */
-function jump(index: number) {
+function submit(index: number, submit: boolean) {
   const type = supportedComponents.data[index]
-  emit('chosen', supportedComponents.data[index][1])
+  if (submit) {
+    emit('chosen', type[1])
+  }
   supportedComponents.data.splice(index, 1)
   window.setTimeout(() => {
     supportedComponents.data.push(type)
@@ -48,7 +80,7 @@ function jump(index: number) {
 </script>
 
 <style lang="scss" scoped>
-@import '../style';
+@import "../style";
 
 .selector-container {
   min-width: 180px;
