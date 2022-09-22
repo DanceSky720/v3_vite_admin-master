@@ -234,8 +234,7 @@ const allow = computed(() => {
 const emit = defineEmits([
   'update:modelValue',
   'save',
-  'addSubject',
-  'removeSubject'
+  'add-subject'
 ])
 
 watch(
@@ -312,7 +311,7 @@ function shadow(subject: QuestionnaireSubject) {
 function dragenter(event: DragEvent) {
   const id = (event.target as HTMLDivElement).id
   if (id === 'questionnaire-designer-transition-group' ) {
-    emit('addSubject')
+    emit('add-subject')
   }
 }
 /**
@@ -322,7 +321,7 @@ function dragenter(event: DragEvent) {
 function dragleave(event: DragEvent) {
   const id = (event.target as HTMLDivElement).id
   if (id ==='questionnaire-designer-transition-group') {
-    emit('removeSubject')
+    remove(questionnaire.data.subjectList.length - 1)
   }
 }
 

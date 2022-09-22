@@ -15,7 +15,6 @@
         :questionnaire-type="questionnaireType"
         @save="$emit('save')"
         @add-subject="addSubject(dragValue as QuestionnaireSupportType)"
-        @remove-subject="removeSubject"
       />
     </div>
   </el-dialog>
