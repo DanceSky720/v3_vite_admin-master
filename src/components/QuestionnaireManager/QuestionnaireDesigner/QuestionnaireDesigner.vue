@@ -53,14 +53,6 @@
       >
         保存
       </el-button>
-      <el-button
-        class="btn"
-        :icon="open ? TurnOff : Open"
-        plain
-        @click="open = !open"
-      >
-        {{ open ? '关闭' : '展开' }}
-      </el-button>
     </div>
     <TransitionGroup
       id="questionnaire-designer-transition-group"
@@ -84,7 +76,7 @@
             </span>
             <span>. &nbsp;</span>
             <span>
-              {{ subject.title }}
+              {{ subject.title  || '标题未填写' }}
             </span>
             <span> ({{ subjectType(subject.type) }}) </span>
           </p>
@@ -147,14 +139,12 @@ import {
   ArrowDownBold,
   DocumentAdd,
   ArrowUpBold,
-  TurnOff,
   Delete,
-  Open,
   Search,
 } from '@element-plus/icons-vue'
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
-import { computed, onBeforeUnmount, onMounted, PropType, reactive, ref, watch } from 'vue'
+import { computed, PropType, reactive, watch } from 'vue'
 import util from '../util'
 const props = defineProps({
   /**
@@ -187,10 +177,6 @@ const questionnaire = reactive({
   data: {} as Questionnaire,
 })
 
-/**
- * 是否展开题目编辑面板
- */
-const open = ref(false)
 /**
  * 是否允许点击保存按钮
  */

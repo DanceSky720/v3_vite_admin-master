@@ -9,7 +9,7 @@
       class="selector-transition-group"
     >
       <el-button
-        v-for="(item, index) in supportedComponents.data"
+        v-for="(item, index) in data.supportedComponents"
         :key="item[0]"
         draggable="true"
         class="btn-selector"
@@ -17,7 +17,7 @@
         type="primary"
         plain
         size="large"
-        @dragstart="dancer = item[1]"
+        @dragstart="data.dancer = item[1]"
         @dragend="submit(index, false)"
         @click="submit(index, true)"
       >
@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import { Rank } from '@element-plus/icons-vue'
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 const props = defineProps({
   /**
    * 类型
@@ -40,26 +40,21 @@ const props = defineProps({
     default: null
   }
 })
-/**
- * 支持的题目
- */
-const supportedComponents = reactive({
-  data: [
+
+const data: TopicSelectorData = reactive({
+  supportedComponents: [
     ['单项选择', QuestionnaireSupportType.RADIO],
     ['多项选择', QuestionnaireSupportType.CHECKBOX]
-  ]
+  ],
+  dancer: ''
 })
-/**
- * 拖拽的题目类型
- */
-const dancer = ref('')
 const emit = defineEmits(['chosen', 'update:modelValue'])
 
 watch(() => props.modelValue, (newValue) => {
-  dancer.value = newValue
-}
+    data.dancer = newValue
+  }
 )
-watch(dancer, (newValue) => {
+watch(() => data.dancer, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
@@ -69,13 +64,13 @@ watch(dancer, (newValue) => {
  * @param submit 是否提交事件
  */
 function submit(index: number, submit: boolean) {
-  const type = supportedComponents.data[index]
+  const type = data.supportedComponents[index]
   if (submit) {
     emit('chosen', type[1])
   }
-  supportedComponents.data.splice(index, 1)
+  data.supportedComponents.splice(index, 1)
   window.setTimeout(() => {
-    supportedComponents.data.push(type)
+    data.supportedComponents.push(type)
   }, 1500)
 }
 </script>

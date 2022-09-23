@@ -1,24 +1,21 @@
 <template>
   <el-dialog
-    v-model="open"
+    v-model="data.open"
     title="问卷编辑面板"
     width="90%"
     :before-close="handleClose"
   >
     <div class="dialog-container">
-      <TopicSelector
-        v-model="dancer"
-        @chosen="addSubject"
-      />
+      <TopicSelector v-model="data.dancer" @chosen="addSubject" />
       <QuestionnaireDesigner
         v-model="questionnaire.data"
         :questionnaire-type="questionnaireType"
         @save="$emit('save')"
-        @add-subject="addSubject(dancer as QuestionnaireSupportType)"
-        @view="currentIndex = $event"
+        @add-subject="addSubject(data.dancer as QuestionnaireSupportType)"
+        @view="data.currentIndex = $event"
       />
       <PanelTopicDesigner
-        v-model="questionnaire.data.subjectList[currentIndex]"
+        v-model="questionnaire.data.subjectList[data.currentIndex]"
         :empty="questionnaire.data.subjectList.length < 1"
       />
     </div>
@@ -39,49 +36,43 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: null
+    default: null,
   },
   /**
    * 显隐控制
    */
   show: {
     type: Boolean,
-    default: false
+    default: false,
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: []
-  }
+    default: [],
+  },
 })
 
 /**
  * 问卷
  */
 const questionnaire = reactive({
-  data: {} as Questionnaire
+  data: {} as Questionnaire,
 })
-/**
- * 显隐控制
- */
-const open = ref(false)
-/**
- * 拖拽的题目类型
- */
-const dancer = ref('')
-/**
- * 当前编辑的下标
- */
-const currentIndex = ref(-1)
+
+const data: DialogQuestionnaireDesignerData = reactive({
+  open: false,
+  dancer: '',
+  currentIndex: 0,
+})
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
 watch(
   [() => props.modelValue, () => props.show],
   ([modelValue, show]) => {
     questionnaire.data = modelValue
-    open.value = show
+    data.open = show
   },
   { immediate: true, deep: true }
 )
@@ -102,9 +93,9 @@ function addSubject(type: QuestionnaireSupportType) {
     title: undefined,
     serialNumber: undefined,
     type: type,
-    options: []
+    options: [],
   })
-  currentIndex.value = questionnaire.data.subjectList.length - 1
+  data.currentIndex = questionnaire.data.subjectList.length - 1
 }
 /**
  * 关闭前处理函数
@@ -117,7 +108,7 @@ async function handleClose() {
       {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
       }
     )
     if (res === 'confirm') {

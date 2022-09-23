@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import DialogQuestionnaireDesigner from './DialogQuestionnaireEdit/DialogQuestionnaireDesigner.vue'
+import DialogQuestionnaireDesigner from './DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
 import QuestionnaireDesigner from './QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import { QuestionnaireStatus } from '../../entity/enum/QuestionnaireStatus.entity'
 import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'

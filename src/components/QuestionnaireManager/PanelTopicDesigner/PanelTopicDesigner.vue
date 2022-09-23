@@ -42,11 +42,11 @@
               :key="option.id"
               draggable="true"
               class="options"
-              :class="dancing ? 'event-done' : ''"
+              :class="data.dancing ? 'event-done' : ''"
               @dragenter="dragenter($event, index)"
               @dragover="$event.preventDefault()"
               @dragstart="dragstart(index)"
-              @dragend="dancing = false"
+              @dragend="data.dancing = false"
             >
               <el-divider content-position="left">
                 <h3>选项{{ index + 1 }}</h3>
@@ -142,6 +142,12 @@ const props = defineProps({
 const questionnaireSubject = reactive({
   data: {} as QuestionnaireSubject
 })
+
+const data: PanelTopicDesignerData = reactive({
+  dancer: 0,
+  dancing: false
+})
+
 // TODO 为没有唯一值的options寻找唯一值
 /**
  * 是否是选择型
@@ -156,14 +162,6 @@ const selective = computed(() => {
 })
 
 const emit = defineEmits(['update:modelValue'])
-/**
- * 拖动的值
- */
-const dancer = ref(0)
-/**
- * 拖动中
- */
-const dancing = ref(false)
 
 /**
  * 是否允许添加新的选项
@@ -242,23 +240,23 @@ function remove(index: number) {
  */
 function dragenter(event: DragEvent, index: number) {
   event.preventDefault()
-  if (dancer.value === index) {
+  if (data.dancer === index) {
     return
   }
   questionnaireSubject.data.options = util.swapPlaces(
     questionnaireSubject.data.options,
     index,
-    dancer.value
+    data.dancer
   )
-  dancer.value = index
+  data.dancer = index
 }
 /**
  * 拖拽开始,更新数据
  * @param index 选中的元素下标
  */
 function dragstart(index: number) {
-  dancing.value = true
-  dancer.value = index
+  data.dancing = true
+  data.dancer = index
 }
 </script>
 

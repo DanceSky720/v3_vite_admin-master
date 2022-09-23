@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <PanelTopicDesigner v-model="data.data"></PanelTopicDesigner>
     <Test></Test>
   </div>
 </template>
@@ -8,7 +7,6 @@
 <script setup lang="ts" name="V1Test">
 import util from './util'
 import { reactive, ref, toRefs, watch } from 'vue'
-import PanelTopicDesigner from './components/PanelTopicDesigner/PanelTopicDesigner.vue'
 import Test from './Test.vue'
 
 const data = reactive({
