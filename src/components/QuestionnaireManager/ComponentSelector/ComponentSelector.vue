@@ -16,6 +16,7 @@
         :icon="Rank"
         type="primary"
         plain
+        size="large"
         @dragstart="dragValue = item[1]"
         @dragend="submit(index, false)"
         @click="submit(index, true)"
@@ -55,8 +56,8 @@ const dragValue = ref('')
 const emit = defineEmits(['chosen', 'update:modelValue'])
 
 watch(() => props.modelValue, (newValue) => {
-    dragValue.value = newValue
-  }
+  dragValue.value = newValue
+}
 )
 watch(dragValue, (newValue) => {
   emit('update:modelValue', newValue)

@@ -7,14 +7,19 @@
   >
     <div class="dialog-container">
       <ComponentSelector
-        v-model="dragValue"
+        v-model="dancer"
         @chosen="addSubject"
       />
       <QuestionnaireDesigner
         v-model="questionnaire.data"
         :questionnaire-type="questionnaireType"
         @save="$emit('save')"
-        @add-subject="addSubject(dragValue as QuestionnaireSupportType)"
+        @add-subject="addSubject(dancer as QuestionnaireSupportType)"
+        @view="currentIndex = $event"
+      />
+      <PanelTopicDesigner
+        v-model="questionnaire.data.subjectList[currentIndex]"
+        :empty="questionnaire.data.subjectList.length < 1"
       />
     </div>
   </el-dialog>
@@ -26,6 +31,7 @@ import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigne
 import ComponentSelector from '../ComponentSelector/ComponentSelector.vue'
 import { PropType, reactive, ref, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
+import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 
 const props = defineProps({
   /**
@@ -64,7 +70,11 @@ const open = ref(false)
 /**
  * 拖拽的题目类型
  */
-const dragValue = ref('')
+const dancer = ref('')
+/**
+ * 当前编辑的下标
+ */
+const currentIndex = ref(-1)
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
 watch(
@@ -94,15 +104,7 @@ function addSubject(type: QuestionnaireSupportType) {
     type: type,
     options: []
   })
-}
-/**
- * 移除最后一个题目
-*/
-function removeSubject() {
-  questionnaire.data.subjectList.splice(
-    questionnaire.data.subjectList.length - 1,
-    1
-  )
+  currentIndex.value = questionnaire.data.subjectList.length - 1
 }
 /**
  * 关闭前处理函数

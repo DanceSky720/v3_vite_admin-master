@@ -1,50 +1,29 @@
 <template>
   <div class="questionnaire-designer-container">
-    <p class="title">
-      {{ questionnaire.data.title }}
-    </p>
+    <div class="title">
+      <el-input
+        v-if="!preview"
+        :disabled="preview"
+        v-model="questionnaire.data.title"
+        class="title-input"
+        show-word-limit
+        placeholder="请输入问卷名"
+        size="large"
+      />
+      <p v-else>{{ questionnaire.data.title }}</p>
+    </div>
     <el-form inline>
-      <el-form-item
-        v-if="!preview"
-        class="label-item"
-        label="问卷名"
-      >
-        <el-input
-          v-model="questionnaire.data.title"
-          class="title-input"
-          show-word-limit
-          placeholder="请输入问卷名"
-        />
-      </el-form-item>
-      <el-form-item
-        v-if="!preview"
-        label="是否启用"
-      >
+      <el-form-item v-if="!preview" label="是否启用">
         <el-radio-group
           v-model="questionnaire.data.isEnable"
           :disabled="preview"
         >
-          <el-radio
-            :label="QuestionnaireStatus.ALIVE"
-          >
-            是
-          </el-radio>
-          <el-radio
-            :label="QuestionnaireStatus.SILENCE"
-          >
-            否
-          </el-radio>
+          <el-radio :label="QuestionnaireStatus.ALIVE"> 是 </el-radio>
+          <el-radio :label="QuestionnaireStatus.SILENCE"> 否 </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item
-        v-if="!preview"
-        label="问卷类型"
-        :disabled="preview"
-      >
-        <el-select
-          v-model="questionnaire.data.type"
-          placeholder="选择问卷类型"
-        >
+      <el-form-item v-if="!preview" label="问卷类型" :disabled="preview">
+        <el-select v-model="questionnaire.data.type" placeholder="选择问卷类型">
           <el-option
             v-for="item in questionnaireType"
             :key="item.value"
@@ -63,10 +42,7 @@
         placeholder="问卷说明"
       />
     </el-form>
-    <div
-      v-if="!preview"
-      class="btn-group"
-    >
+    <div v-if="!preview" class="btn-group">
       <el-button
         class="btn"
         :icon="DocumentAdd"
@@ -83,12 +59,12 @@
         plain
         @click="open = !open"
       >
-        {{ open ? "关闭" : "展开" }}
+        {{ open ? '关闭' : '展开' }}
       </el-button>
     </div>
     <TransitionGroup
       id="questionnaire-designer-transition-group"
-      :class="preview ? '' : 'questionnaire-designer-transition-group'"
+      :class="`${!props.preview ? 'designer-tip-box' : ''} events-none`"
       name="bounce"
       tag="div"
       @dragenter="dragenter($event)"
@@ -112,10 +88,14 @@
             </span>
             <span> ({{ subjectType(subject.type) }}) </span>
           </p>
-          <div
-            v-if="!preview"
-            class="action-btn-ground"
-          >
+          <div v-if="!preview" class="action-btn-ground">
+            <el-button
+              class="list-btn"
+              :icon="Search"
+              plain
+              circle
+              @click="$emit('view', index)"
+            />
             <el-button
               :icon="ArrowUpBold"
               circle
@@ -157,12 +137,6 @@
             :label="option.title"
           />
         </div>
-        <Transition name="bounce">
-          <PanelTopicDesigner
-            v-if="!preview && open"
-            v-model="questionnaire.data.subjectList[index]"
-          />
-        </Transition>
       </div>
     </TransitionGroup>
   </div>
@@ -175,12 +149,12 @@ import {
   ArrowUpBold,
   TurnOff,
   Delete,
-  Open
+  Open,
+  Search,
 } from '@element-plus/icons-vue'
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
-import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
-import { computed, PropType, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, PropType, reactive, ref, watch } from 'vue'
 import util from '../util'
 const props = defineProps({
   /**
@@ -188,29 +162,29 @@ const props = defineProps({
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: undefined
+    default: undefined,
   },
   /**
    * 预览模式
    */
   preview: {
     type: Boolean,
-    default: false
+    default: false,
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: []
-  }
+    default: [],
+  },
 })
 
 /**
  * 问卷
  */
 const questionnaire = reactive({
-  data: {} as Questionnaire
+  data: {} as Questionnaire,
 })
 
 /**
@@ -226,16 +200,12 @@ const allow = computed(() => {
     emptyTitle(questionnaire.data.subjectList),
     questionnaire.data.subjectList.length > 0,
     questionnaire.data.title ? questionnaire.data.title.length > 0 : false,
-    questionnaire.data.type ? questionnaire.data.type.length > 0 : false
+    questionnaire.data.type ? questionnaire.data.type.length > 0 : false,
   ]
   return checkArray.every((pass: boolean) => pass)
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'save',
-  'add-subject'
-])
+const emit = defineEmits(['update:modelValue', 'save', 'add-subject', 'view'])
 
 watch(
   () => props.modelValue,
@@ -301,8 +271,8 @@ function emptyTitle(list: QuestionnaireSubject[]) {
  */
 function shadow(subject: QuestionnaireSubject) {
   return subject.title || props.preview
-    ? '0px 0px 6px rgb(226, 226, 226)'
-    : '0px 0px 6px #F56C6C'
+    ? '0px 0px 12px rgb(226, 226, 226)'
+    : '0px 0px 12px #FD9090'
 }
 /**
  * 拖拽进入该组件时,添加题目事件
@@ -310,7 +280,7 @@ function shadow(subject: QuestionnaireSubject) {
  */
 function dragenter(event: DragEvent) {
   const id = (event.target as HTMLDivElement).id
-  if (id === 'questionnaire-designer-transition-group' ) {
+  if (id === 'questionnaire-designer-transition-group') {
     emit('add-subject')
   }
 }
@@ -320,7 +290,7 @@ function dragenter(event: DragEvent) {
  */
 function dragleave(event: DragEvent) {
   const id = (event.target as HTMLDivElement).id
-  if (id ==='questionnaire-designer-transition-group') {
+  if (id === 'questionnaire-designer-transition-group') {
     remove(questionnaire.data.subjectList.length - 1)
   }
 }
@@ -344,7 +314,7 @@ function subjectType(type: string | undefined) {
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import '../style';
 
 .questionnaire-designer-container {
   box-sizing: border-box;
@@ -363,7 +333,7 @@ function subjectType(type: string | undefined) {
   pointer-events: all;
 }
 
-.questionnaire-designer-transition-group {
+.designer-tip-box {
   position: relative;
   margin-top: 20px;
   min-height: 200px;
@@ -371,21 +341,24 @@ function subjectType(type: string | undefined) {
   border-radius: $q-border-radius-normal;
 }
 
-.questionnaire-designer-transition-group > * {
-  pointer-events: none;
-}
-
-.questionnaire-designer-transition-group::before {
+.designer-tip-box::before {
   position: absolute;
-  content: "点击左侧或拖拽到这里";
+  content: '点击左侧按钮或拖拽至此处';
   left: 50%;
-  top: 50%;
-  width: 100%;
+  top: -10px;
   text-align: center;
   height: 20px;
+  line-height: 20px;
   box-sizing: border-box;
   color: rgb(148, 148, 148);
-  transform: translate(-50%, -50%);
+  border: 1px dashed rgb(150, 150, 150);
+  background: #fff;
+  border-radius: $q-border-radius-normal;
+  transform: translateX(-50%);
+}
+
+.events-none > * {
+  pointer-events: none;
 }
 
 .title {
@@ -410,7 +383,7 @@ function subjectType(type: string | undefined) {
 
 .subject {
   padding: 20px;
-  margin: 18px 0;
+  margin: 18px 10px;
   background: #fff;
   border: none;
   border-radius: 6px;

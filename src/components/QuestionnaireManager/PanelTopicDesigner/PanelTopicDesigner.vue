@@ -1,109 +1,131 @@
 <template>
-  <div
-    class="edit-container"
-    :style="{ boxShadow: shadow(questionnaireSubject.data) }"
-  >
-    <el-button
-      v-if="selective"
-      class="add-btn"
-      type="primary"
-      :disabled="!allow"
-      plain
-      @click="addOption"
-    >
-      添加新选项
-    </el-button>
-    <div class="edit-area">
-      <el-form>
-        <el-form-item
-          label="题目"
-          size="large"
-        >
-          <el-input
-            v-model="questionnaireSubject.data.title"
-            size="large"
-            placeholder="为题目添加标题"
-          />
-        </el-form-item>
-        <p
-          v-if="selective"
-          class="row"
-        >
-          <span class="col">选项标题</span>
-          <span class="col">选项说明</span>
-          <span class="col">分数</span>
-          <span class="col">操作</span>
-        </p>
-        <TransitionGroup
-          name="bounce"
-          tag="div"
-          class="transition-group"
-        >
-          <div
-            v-for="(option, index) in questionnaireSubject.data.options"
-            :key="index"
-            class="row"
+  <div class="edit-container">
+    <div v-if="!empty">
+      <p class="edit-container_title">
+        题目属性
+      </p>
+      <div class="edit-area">
+        <template v-if="questionnaireSubject.data">
+          <el-form>
+            <el-form-item
+              label="题目"
+              size="large"
+            >
+              <el-input
+                v-model="questionnaireSubject.data.title"
+                size="large"
+                placeholder="为题目添加标题"
+              />
+            </el-form-item>
+          </el-form>
+          <el-divider> <h2>选项</h2> </el-divider>
+          <el-button
+            v-if="selective"
+            class="add-btn"
+            type="primary"
+            :disabled="!allow"
+            :icon="Plus"
+            plain
+            @click="addOption"
           >
-            <!-- // TODO 为没有唯一值的options寻找唯一值 -->
-            <el-input
-              v-model="option.title"
-              class="col"
-              placeholder="请输入标题"
-            />
-            <el-input
-              v-model="option.explain"
-              class="col"
-              placeholder="请输入说明"
-            />
-            <el-input
-              v-model="option.fraction"
-              class="col"
-              type="number"
-              placeholder="请输入分数"
-            />
-            <div class="col">
-              <el-button
-                :icon="ArrowUpBold"
-                circle
-                plain
-                @click="upwards(index)"
-              />
-              <el-button
-                :icon="ArrowDownBold"
-                circle
-                plain
-                @click="downward(index)"
-              />
-              <el-button
-                type="danger"
-                :icon="Delete"
-                circle
-                plain
-                @click="remove(index)"
-              />
+            添加新选项
+          </el-button>
+        </template>
+        <el-form>
+          <TransitionGroup
+            name="bounce"
+            tag="div"
+            class="transition-group"
+          >
+            <div
+              v-for="(option, index) in questionnaireSubject.data.options"
+              :key="index"
+              class="row-s"
+            >
+              <el-divider content-position="left">
+                <h3>选项{{ index + 1 }}</h3>
+              </el-divider>
+              <el-form-item class="action-right">
+                <el-button
+                  :icon="ArrowUpBold"
+                  circle
+                  plain
+                  @click="upwards(index)"
+                />
+                <el-button
+                  :icon="ArrowDownBold"
+                  circle
+                  plain
+                  @click="downward(index)"
+                />
+                <el-button
+                  type="danger"
+                  :icon="Delete"
+                  circle
+                  plain
+                  @click="remove(index)"
+                />
+              </el-form-item>
+              <el-form-item label="标题">
+                <el-input
+                  v-model="option.title"
+                  placeholder="为题目添加标题"
+                />
+              </el-form-item>
+              <el-form-item label="分数">
+                <el-input
+                  v-model="option.fraction"
+                  class="col"
+                  type="number"
+                  placeholder="请输入分数"
+                />
+              </el-form-item>
+              <el-form-item label="说明">
+                <el-input
+                  v-model="option.explain"
+                  class="col"
+                  placeholder="请输入说明"
+                />
+              </el-form-item>
             </div>
-          </div>
-        </TransitionGroup>
-      </el-form>
+          </TransitionGroup>
+        </el-form>
+      </div>
     </div>
+    <div
+      v-else
+      class="panel-empty-view"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
-import { Delete, ArrowUpBold, ArrowDownBold } from '@element-plus/icons-vue'
+import {
+  Delete,
+  ArrowUpBold,
+  ArrowDownBold,
+  Plus
+} from '@element-plus/icons-vue'
 import { computed, PropType, reactive, watch } from 'vue'
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import util from '../util'
+
 const props = defineProps({
   /**
    * 题目
    */
   modelValue: {
     type: Object as PropType<QuestionnaireSubject>,
-    default: null
+    default: undefined
+  },
+  /**
+   * 是否选中题目
+   */
+  empty: {
+    type: Boolean,
+    default: false
   }
 })
-
 /**
  * 题目
  */
@@ -115,27 +137,15 @@ const questionnaireSubject = reactive({
  * 是否是选择型
  */
 const selective = computed(() => {
-  return (
-    questionnaireSubject.data.type === QuestionnaireSupportType.CHECKBOX ||
-    QuestionnaireSupportType.RADIO
-  )
+  if (questionnaireSubject) {
+    return (
+      questionnaireSubject?.data?.type === QuestionnaireSupportType.CHECKBOX ||
+      questionnaireSubject?.data?.type === QuestionnaireSupportType.RADIO
+    )
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])
-
-/**
- * 题目项目阴影
- * @param subject 题目
- */
-function shadow(subject: QuestionnaireSubject) {
-  const normal = '0px 0px 6px rgb(226, 226, 226)'
-  if (subject.type === QuestionnaireSupportType.INPUT) {
-    return normal
-  }
-  if (selective.value) {
-    return subject.options.length > 0 ? normal : '0px 0px 12px #FFBDBD'
-  }
-}
 
 /**
  * 是否允许添加新的选项
@@ -154,7 +164,9 @@ const allow = computed(() => {
 watch(
   () => props.modelValue,
   (modelValue) => {
-    questionnaireSubject.data = modelValue
+    if (modelValue) {
+      questionnaireSubject.data = modelValue
+    }
   },
   { immediate: true }
 )
@@ -210,12 +222,22 @@ function remove(index: number) {
 @import "../style";
 
 .edit-container {
+  min-width: 280px;
   padding: 4px 20px;
   margin: 20px 0;
-  background-color: #f0f0f0;
+  overflow-y: auto;
+  pointer-events: all;
   border-radius: $q-border-radius-normal;
   transition: $q-transition-speed1;
-  pointer-events: all;
+  box-shadow: $q-box-shadow-normal;
+
+  &_title {
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 28px;
+  }
 }
 
 .edit-area {
@@ -224,34 +246,53 @@ function remove(index: number) {
   padding: 20px;
   margin: 10px 0;
   clear: both;
-  background-color: #e2e2e2;
   border-radius: $q-border-radius-normal;
   transition: all 18s;
 }
 
+.action-right {
+  align-self: flex-end;
+}
+
 .add-btn {
-  float: right;
   margin: 10px 0;
 }
 
-.row {
+.row-s {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
 .transition-group {
-  background: #d3d3d3;
   transition: all 0.8s;
 }
 
-.row > .col {
+.row-s > .col {
   flex: 1;
   padding: 8px;
   font-size: 16px;
   font-weight: bold;
   color: #303030;
   text-align: left;
-  background: #d3d3d3;
+}
+
+.panel-empty-view {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+.panel-empty-view::after {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  font-size: 22px;
+  content: "没有选中的组件";
+  transform: translate(-50%, -50%);
 }
 </style>
