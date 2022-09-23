@@ -245,7 +245,7 @@ function remove(index: number) {
   margin: 10px 0;
   clear: both;
   border-radius: $q-border-radius-normal;
-  transition: all 18s;
+  transition: $q-transition-speed1;
 }
 
 .action-right {
