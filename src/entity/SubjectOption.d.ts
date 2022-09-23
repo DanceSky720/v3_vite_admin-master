@@ -3,6 +3,10 @@
  */
 declare interface SubjectOption {
   /**
+   * id
+   */
+   id?: string | undefined
+  /**
    * 选项名称
    */
   title: string | undefined

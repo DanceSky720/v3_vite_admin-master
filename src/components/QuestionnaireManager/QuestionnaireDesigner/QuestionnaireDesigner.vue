@@ -278,20 +278,15 @@ function shadow(subject: QuestionnaireSubject) {
  * @param event 拖拽事件
  */
 function dragenter(event: DragEvent) {
-  const id = (event.target as HTMLDivElement).id
-  if (id === 'questionnaire-designer-transition-group') {
     emit('add-subject')
-  }
 }
 /**
  * 拖拽离开该组件时,移除题目事件
  * @param event 拖拽事件
  */
 function dragleave(event: DragEvent) {
-  const id = (event.target as HTMLDivElement).id
-  if (id === 'questionnaire-designer-transition-group') {
     remove(questionnaire.data.subjectList.length - 1)
-  }
+
 }
 
 /**
@@ -381,8 +376,10 @@ function subjectType(type: string | undefined) {
 }
 
 .subject {
+  box-sizing: border-box;
+  width: 96%;
   padding: 20px;
-  margin: 18px 10px;
+  margin: 18px auto;
   background: #fff;
   border: none;
   border-radius: 6px;

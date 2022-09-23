@@ -61,4 +61,5 @@ function downward<T>(array: T[], wanna: number): T[] {
 export default {
   upwards,
   downward,
+  swapPlaces
 }

@@ -24,12 +24,11 @@ const dragIndex1 = ref(0)
 const is2 = ref(false)
 
 const list = reactive([
-  { label: '列表1' },
-  { label: '列表2' },
-  { label: '列表3' },
-  { label: '列表4' },
-  { label: '列表5' },
-  { label: '列表6' },
+  { label: new Date().getTime()+1 },
+  { label: new Date().getTime()+2 },
+  { label: new Date().getTime()+3 },
+  { label: new Date().getTime()+4 },
+  { label: new Date().getTime()+562 },
 ])
 
 function dragstart(index) {

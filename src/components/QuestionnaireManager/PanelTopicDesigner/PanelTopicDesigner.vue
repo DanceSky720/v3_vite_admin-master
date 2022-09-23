@@ -39,13 +39,24 @@
           >
             <div
               v-for="(option, index) in questionnaireSubject.data.options"
-              :key="index"
-              class="row-s"
+              :key="option.id"
+              draggable="true"
+              class="options"
+              :class="dancing ? 'event-done' : ''"
+              @dragenter="dragenter($event, index)"
+              @dragover="$event.preventDefault()"
+              @dragstart="dragstart(index)"
+              @dragend="dancing = false"
             >
               <el-divider content-position="left">
                 <h3>选项{{ index + 1 }}</h3>
               </el-divider>
               <el-form-item class="action-right">
+                <el-button
+                  :icon="Rank"
+                  circle
+                  plain
+                />
                 <el-button
                   :icon="ArrowUpBold"
                   circle
@@ -75,7 +86,6 @@
               <el-form-item label="分数">
                 <el-input
                   v-model="option.fraction"
-                  class="col"
                   type="number"
                   placeholder="请输入分数"
                 />
@@ -83,7 +93,6 @@
               <el-form-item label="说明">
                 <el-input
                   v-model="option.explain"
-                  class="col"
                   placeholder="请输入说明"
                 />
               </el-form-item>
@@ -104,11 +113,12 @@ import {
   Delete,
   ArrowUpBold,
   ArrowDownBold,
-  Plus
+  Plus,
+  Rank
 } from '@element-plus/icons-vue'
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
-import { computed, PropType, reactive, watch } from 'vue'
-import util from '../util'
+import { computed, PropType, reactive, ref, watch } from 'vue'
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity';
+import util from '../util';
 
 const props = defineProps({
   /**
@@ -146,6 +156,14 @@ const selective = computed(() => {
 })
 
 const emit = defineEmits(['update:modelValue'])
+/**
+ * 拖动的值
+ */
+const dancer = ref(0)
+/**
+ * 拖动中
+ */
+const dancing = ref(false)
 
 /**
  * 是否允许添加新的选项
@@ -161,12 +179,14 @@ const allow = computed(() => {
   return checkArray.every((pass: boolean) => pass)
 })
 
-watch(() => props.modelValue,
+watch(
+  () => props.modelValue,
   (modelValue) => {
     if (modelValue) {
       questionnaireSubject.data = modelValue
     }
-  }, { immediate: true }
+  },
+  { immediate: true }
 )
 
 watch(questionnaireSubject.data, (newValue) => {
@@ -200,6 +220,7 @@ function downward(index: number) {
  */
 function addOption() {
   questionnaireSubject.data.options.push({
+    id: new Date().getTime().toString(),
     title: '',
     serialNumber: undefined,
     explain: undefined,
@@ -214,6 +235,31 @@ function addOption() {
 function remove(index: number) {
   questionnaireSubject.data.options.splice(index, 1)
 }
+/**
+ * 拖拽进入时,交换值
+ * @param event 拖拽事件
+ * @param index 交换的元素下标
+ */
+function dragenter(event: DragEvent, index: number) {
+  event.preventDefault()
+  if (dancer.value === index) {
+    return
+  }
+  questionnaireSubject.data.options = util.swapPlaces(
+    questionnaireSubject.data.options,
+    index,
+    dancer.value
+  )
+  dancer.value = index
+}
+/**
+ * 拖拽开始,更新数据
+ * @param index 选中的元素下标
+ */
+function dragstart(index: number) {
+  dancing.value = true
+  dancer.value = index
+}
 </script>
 
 <style lang="scss" scoped>
@@ -226,15 +272,15 @@ function remove(index: number) {
   overflow-y: auto;
   pointer-events: all;
   border-radius: $q-border-radius-normal;
-  transition: $q-transition-speed1;
   box-shadow: $q-box-shadow-normal;
+  transition: $q-transition-speed1;
 
   &_title {
-    margin: 10px 0;
-    width: 100%;
     box-sizing: border-box;
-    text-align: center;
+    width: 100%;
+    margin: 10px 0;
     font-size: 28px;
+    text-align: center;
   }
 }
 
@@ -256,24 +302,17 @@ function remove(index: number) {
   margin: 10px 0;
 }
 
-.row-s {
+.options {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.transition-group {
-  transition: all 0.8s;
-}
-
-.row-s > .col {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #303030;
-  text-align: left;
+.event-done  {
+  * {
+    pointer-events: none;
+  }
 }
 
 .panel-empty-view {
@@ -285,11 +324,11 @@ function remove(index: number) {
 
 .panel-empty-view::after {
   position: absolute;
-  width: 100%;
   top: 50%;
   left: 50%;
-  text-align: center;
+  width: 100%;
   font-size: 22px;
+  text-align: center;
   content: "没有选中的组件";
   transform: translate(-50%, -50%);
 }
