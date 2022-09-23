@@ -17,7 +17,7 @@
         type="primary"
         plain
         size="large"
-        @dragstart="dragValue = item[1]"
+        @dragstart="dancer = item[1]"
         @dragend="submit(index, false)"
         @click="submit(index, true)"
       >
@@ -52,14 +52,14 @@ const supportedComponents = reactive({
 /**
  * 拖拽的题目类型
  */
-const dragValue = ref('')
+const dancer = ref('')
 const emit = defineEmits(['chosen', 'update:modelValue'])
 
 watch(() => props.modelValue, (newValue) => {
-  dragValue.value = newValue
+  dancer.value = newValue
 }
 )
-watch(dragValue, (newValue) => {
+watch(dancer, (newValue) => {
   emit('update:modelValue', newValue)
 })
 

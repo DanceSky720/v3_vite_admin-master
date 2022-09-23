@@ -207,8 +207,7 @@ const allow = computed(() => {
 
 const emit = defineEmits(['update:modelValue', 'save', 'add-subject', 'view'])
 
-watch(
-  () => props.modelValue,
+watch(() => props.modelValue,
   (newValue) => {
     if (newValue) {
       questionnaire.data = newValue

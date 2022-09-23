@@ -6,7 +6,7 @@
     :before-close="handleClose"
   >
     <div class="dialog-container">
-      <ComponentSelector
+      <TopicSelector
         v-model="dancer"
         @chosen="addSubject"
       />
@@ -28,10 +28,10 @@
 <script setup lang="ts">
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
-import ComponentSelector from '../ComponentSelector/ComponentSelector.vue'
+import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
+import TopicSelector from '../TopicSelector/TopicSelector.vue'
 import { PropType, reactive, ref, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
-import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 
 const props = defineProps({
   /**

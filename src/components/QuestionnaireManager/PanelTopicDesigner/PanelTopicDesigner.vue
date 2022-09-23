@@ -106,8 +106,8 @@ import {
   ArrowDownBold,
   Plus
 } from '@element-plus/icons-vue'
-import { computed, PropType, reactive, watch } from 'vue'
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import { computed, PropType, reactive, watch } from 'vue'
 import util from '../util'
 
 const props = defineProps({
@@ -161,14 +161,12 @@ const allow = computed(() => {
   return checkArray.every((pass: boolean) => pass)
 })
 
-watch(
-  () => props.modelValue,
+watch(() => props.modelValue,
   (modelValue) => {
     if (modelValue) {
       questionnaireSubject.data = modelValue
     }
-  },
-  { immediate: true }
+  }, { immediate: true }
 )
 
 watch(questionnaireSubject.data, (newValue) => {
