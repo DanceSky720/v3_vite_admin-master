@@ -39,7 +39,7 @@
           >
             <div
               v-for="(option, index) in questionnaireSubject.data.options"
-              :key="option.id"
+              :key="option.id ?? option.title"
               draggable="true"
               class="options"
               :class="data.dancing ? 'event-done' : ''"
@@ -117,8 +117,9 @@ import {
   Rank
 } from '@element-plus/icons-vue'
 import { computed, PropType, reactive, ref, watch } from 'vue'
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity';
-import util from '../util';
+import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import useTopicDesigner from './useTopicDesigner'
+import util from '../util'
 
 const props = defineProps({
   /**
@@ -136,46 +137,25 @@ const props = defineProps({
     default: false
   }
 })
-/**
- * 题目
- */
-const questionnaireSubject = reactive({
-  data: {} as QuestionnaireSubject
-})
 
 const data: PanelTopicDesignerData = reactive({
   dancer: 0,
   dancing: false
 })
 
+const {
+  questionnaireSubject,
+  upwards,
+  downward,
+  addOption,
+  remove,
+  selective,
+  allow
+} = useTopicDesigner()
+
 // TODO 为没有唯一值的options寻找唯一值
-/**
- * 是否是选择型
- */
-const selective = computed(() => {
-  if (questionnaireSubject) {
-    return (
-      questionnaireSubject?.data?.type === QuestionnaireSupportType.CHECKBOX ||
-      questionnaireSubject?.data?.type === QuestionnaireSupportType.RADIO
-    )
-  }
-})
 
 const emit = defineEmits(['update:modelValue'])
-
-/**
- * 是否允许添加新的选项
- */
-const allow = computed(() => {
-  const hasTitle = questionnaireSubject.data.options.every(
-    (option: SubjectOption) => option.title !== ''
-  )
-  const checkArray: Array<boolean> = [
-    hasTitle,
-    questionnaireSubject.data.options.length < 4
-  ]
-  return checkArray.every((pass: boolean) => pass)
-})
 
 watch(
   () => props.modelValue,
@@ -191,48 +171,6 @@ watch(questionnaireSubject.data, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
-/**
- * 上移选项
- * @param index 要上移的元素下标
- */
-function upwards(index: number) {
-  questionnaireSubject.data.options = util.upwards<SubjectOption>(
-    questionnaireSubject.data.options,
-    index
-  )
-}
-
-/**
- * 下移选项
- * @param index 要下移的元素下标
- */
-function downward(index: number) {
-  questionnaireSubject.data.options = util.downward<SubjectOption>(
-    questionnaireSubject.data.options,
-    index
-  )
-}
-
-/**
- * 添加选项
- */
-function addOption() {
-  questionnaireSubject.data.options.push({
-    id: new Date().getTime().toString(),
-    title: '',
-    serialNumber: undefined,
-    explain: undefined,
-    fraction: undefined
-  })
-}
-
-/**
- * 移除选项
- * @param index 要移除的元素下标
- */
-function remove(index: number) {
-  questionnaireSubject.data.options.splice(index, 1)
-}
 /**
  * 拖拽进入时,交换值
  * @param event 拖拽事件
@@ -307,7 +245,7 @@ function dragstart(index: number) {
   justify-content: center;
 }
 
-.event-done  {
+.event-done {
   * {
     pointer-events: none;
   }

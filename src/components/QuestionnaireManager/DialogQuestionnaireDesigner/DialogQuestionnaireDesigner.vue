@@ -27,7 +27,7 @@ import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupp
 import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 import TopicSelector from '../TopicSelector/TopicSelector.vue'
-import { PropType, reactive, ref, watch } from 'vue'
+import { PropType, reactive, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
 
 const props = defineProps({
@@ -81,7 +81,7 @@ watch(questionnaire.data, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
-watch(open, (newValue) => {
+watch(() => data.open, (newValue) => {
   emit('update:show', newValue)
 })
 /**

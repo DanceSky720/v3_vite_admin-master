@@ -7,26 +7,26 @@
         @query="$emit('query', $event)"
       />
       <ListQuestionnaire
-        :data="questionnaireList.data"
+        :data="innerData.questionnaireList"
         @edit="edit"
-        @view="active = $event"
+        @view="innerData.active = $event"
       />
       <el-pagination
-        v-model:currentPage="innerCurrentPage"
+        v-model:currentPage="innerData.innerCurrentPage"
         class="manager-pagination"
         :page-size="pageSize"
         layout="total, prev, pager, next, jumper"
-        :total="questionnaireList.data.length"
+        :total="innerData.questionnaireList.length"
       />
     </div>
     <QuestionnaireDesigner
-      v-model="questionnaireList.data[active]"
+      v-model="innerData.questionnaireList[innerData.active]"
       class="preview"
       preview
     />
     <DialogQuestionnaireDesigner
-      v-model="questionnaire.data"
-      v-model:show="show"
+      v-model="innerData.questionnaire"
+      v-model:show="innerData.show"
       :questionnaire-type="questionnaireType"
       @close="close"
       @save="save"
@@ -39,7 +39,7 @@ import DialogQuestionnaireDesigner from './DialogQuestionnaireDesigner/DialogQue
 import QuestionnaireDesigner from './QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import { QuestionnaireStatus } from '../../entity/enum/QuestionnaireStatus.entity'
 import ListQuestionnaire from './ListQuestionnaire/ListQuestionnaire.vue'
-import { PropType, reactive, ref, watch } from 'vue'
+import { PropType, reactive, watch } from 'vue'
 import OperateBar from './OperateBar/OperateBar.vue'
 import { cloneDeep } from 'lodash-es'
 
@@ -49,57 +49,45 @@ const props = defineProps({
    */
   data: {
     type: Object as PropType<Questionnaire[]>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 保存问卷的方法
    */
   saveFunc: {
     type: Function as PropType<(data: Questionnaire) => void>,
-    default: null,
+    default: null
   },
   /**
    * 当前页
    */
   currentPage: {
     type: Number,
-    default: 1,
+    default: 1
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: [],
+    default: []
   },
   /**
    * 页数
    */
   pageSize: {
     type: Number,
-    default: 10,
-  },
+    default: 10
+  }
 })
-/**
- * 问卷列表
- */
-const questionnaireList = reactive({ data: [] as Questionnaire[] })
-/**
- * 激活的下标
- */
-const active = ref(0)
-/**
- * 当前页
- */
-const innerCurrentPage = ref(1)
-/**
- * 显隐控制
- */
-const show = ref(false)
-/**
- * 问卷
- */
-const questionnaire = reactive({ data: {} as Questionnaire })
+
+const innerData: QuestionnaireManagerData = reactive({
+  active: 0,
+  innerCurrentPage: 1,
+  show: false,
+  questionnaireList: [],
+  questionnaire: {} as Questionnaire
+})
 
 const emit = defineEmits(['update:currentPage', 'reload', 'query'])
 
@@ -107,31 +95,36 @@ watch(
   [() => props.data, () => props.currentPage],
   ([data, currentPage]) => {
     if (data) {
-      questionnaireList.data = cloneDeep(data)
-      questionnaire.data = questionnaireList.data[0]
+      innerData.questionnaireList = data
+      innerData.questionnaire = cloneDeep(innerData.questionnaireList[0])
     }
-    innerCurrentPage.value = currentPage
+    innerData.innerCurrentPage = currentPage
   },
   { immediate: true, deep: true }
 )
 
-watch(innerCurrentPage, (newValue) => {
-  emit('update:currentPage', newValue)
-})
+watch(
+  () => innerData.innerCurrentPage,
+  (newValue) => {
+    emit('update:currentPage', newValue)
+  }
+)
 
 /**
  * 编辑按钮点击事件
  */
 function edit(index: number) {
-  active.value = index
-  questionnaire.data = questionnaireList.data[active.value]
-  show.value = true
+  innerData.active = index
+  innerData.questionnaire = cloneDeep(
+    innerData.questionnaireList[innerData.active]
+  )
+  innerData.show = true
 }
 /**
  * 重置组件数据
  */
 function reborn() {
-  questionnaire.data = {
+  innerData.questionnaire = {
     id: undefined,
     title: undefined,
     details: undefined,
@@ -141,7 +134,7 @@ function reborn() {
     lastUpdateUserName: undefined,
     lastUpdateDate: undefined,
     type: undefined,
-    subjectList: [],
+    subjectList: []
   }
 }
 /**
@@ -149,22 +142,21 @@ function reborn() {
  */
 function createQuestionnaire() {
   reborn()
-  show.value = true
+  innerData.show = true
 }
 /**
  * 保存按钮点击
  */
 function save() {
-  props.saveFunc(questionnaire.data)
-  show.value = false
+  props.saveFunc(innerData.questionnaire)
+  innerData.show = false
 }
 /**
  * 编辑弹窗关闭
  */
 function close() {
-  show.value = false
-  active.value = 0
-  reborn()
+  innerData.show = false
+  innerData.active = 0
   emit('reload')
 }
 </script>

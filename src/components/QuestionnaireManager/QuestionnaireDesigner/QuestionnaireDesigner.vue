@@ -1,29 +1,45 @@
 <template>
   <div class="questionnaire-designer-container">
-    <div class="title">
+    <div class="questionnaire-title">
       <el-input
         v-if="!preview"
-        :disabled="preview"
         v-model="questionnaire.data.title"
+        :disabled="preview"
         class="title-input"
         show-word-limit
         placeholder="请输入问卷名"
         size="large"
       />
-      <p v-else>{{ questionnaire.data.title }}</p>
+      <p v-else>
+        {{ questionnaire.data.title }}
+      </p>
     </div>
     <el-form inline>
-      <el-form-item v-if="!preview" label="是否启用">
+      <el-form-item
+        v-if="!preview"
+        label="是否启用"
+      >
         <el-radio-group
           v-model="questionnaire.data.isEnable"
           :disabled="preview"
         >
-          <el-radio :label="QuestionnaireStatus.ALIVE"> 是 </el-radio>
-          <el-radio :label="QuestionnaireStatus.SILENCE"> 否 </el-radio>
+          <el-radio :label="QuestionnaireStatus.ALIVE">
+            是
+          </el-radio>
+          <el-radio :label="QuestionnaireStatus.SILENCE">
+            否
+          </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-if="!preview" label="问卷类型" :disabled="preview">
-        <el-select v-model="questionnaire.data.type" placeholder="选择问卷类型">
+      <el-form-item
+        v-if="!preview"
+        label="问卷类型"
+        :disabled="preview"
+      >
+        <el-select
+          v-model="questionnaire.data.type"
+          placeholder="选择问卷类型"
+        >
           <el-option
             v-for="item in questionnaireType"
             :key="item.value"
@@ -42,7 +58,10 @@
         placeholder="问卷说明"
       />
     </el-form>
-    <div v-if="!preview" class="btn-group">
+    <div
+      v-if="!preview"
+      class="btn-group"
+    >
       <el-button
         class="btn"
         :icon="DocumentAdd"
@@ -59,9 +78,9 @@
       :class="`${!props.preview ? 'designer-tip-box' : ''} events-none`"
       name="bounce"
       tag="div"
-      @dragenter="dragenter($event)"
+      @dragenter="$emit('add-subject')"
       @dragover="$event.preventDefault()"
-      @dragleave="dragleave($event)"
+      @dragleave="dragleave()"
     >
       <div
         v-for="(subject, index) in questionnaire.data.subjectList"
@@ -76,11 +95,14 @@
             </span>
             <span>. &nbsp;</span>
             <span>
-              {{ subject.title  || '标题未填写' }}
+              {{ subject.title || "无标题" }}
             </span>
             <span> ({{ subjectType(subject.type) }}) </span>
           </p>
-          <div v-if="!preview" class="action-btn-ground">
+          <div
+            v-if="!preview"
+            class="action-btn-ground"
+          >
             <el-button
               class="list-btn"
               :icon="Search"
@@ -140,56 +162,37 @@ import {
   DocumentAdd,
   ArrowUpBold,
   Delete,
-  Search,
+  Search
 } from '@element-plus/icons-vue'
 import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
 import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
-import { computed, PropType, reactive, watch } from 'vue'
-import util from '../util'
+import useQuestionnaireDesigner from './useQuestionnaireDesigner'
+import { PropType, watch } from 'vue'
 const props = defineProps({
   /**
    * 问卷
    */
   modelValue: {
     type: Object as PropType<Questionnaire>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 预览模式
    */
   preview: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * 问卷类型数组
    */
   questionnaireType: {
     type: Array as PropType<questionnaireType[]>,
-    default: [],
-  },
+    default: []
+  }
 })
 
-/**
- * 问卷
- */
-const questionnaire = reactive({
-  data: {} as Questionnaire,
-})
-
-/**
- * 是否允许点击保存按钮
- */
-const allow = computed(() => {
-  const checkArray = [
-    hasUniqueTitle(questionnaire.data.subjectList),
-    emptyTitle(questionnaire.data.subjectList),
-    questionnaire.data.subjectList.length > 0,
-    questionnaire.data.title ? questionnaire.data.title.length > 0 : false,
-    questionnaire.data.type ? questionnaire.data.type.length > 0 : false,
-  ]
-  return checkArray.every((pass: boolean) => pass)
-})
+const { questionnaire, upwards, downward, remove, allow,subjectType } = useQuestionnaireDesigner()
 
 const emit = defineEmits(['update:modelValue', 'save', 'add-subject', 'view'])
 
@@ -207,50 +210,6 @@ watch(questionnaire.data, (newValue) => {
 })
 
 /**
- * 上移题目
- * @param index 要上移的元素下标
- */
-function upwards(index: number) {
-  questionnaire.data.subjectList = util.upwards<QuestionnaireSubject>(
-    questionnaire.data.subjectList,
-    index
-  )
-}
-/**
- * 下移题目
- * @param index 要下移的元素下标
- */
-function downward(index: number) {
-  questionnaire.data.subjectList = util.downward<QuestionnaireSubject>(
-    questionnaire.data.subjectList,
-    index
-  )
-}
-/**
- * 移除题目
- * @param index 要移除的元素下标
- */
-function remove(index: number) {
-  questionnaire.data.subjectList.splice(index, 1)
-}
-/**
- * 是否拥有相同的标题
- * @param list 要检查的数组
- */
-function hasUniqueTitle(list: QuestionnaireSubject[]) {
-  return (
-    new Set(list.map((subject: QuestionnaireSubject) => subject.title)).size ===
-    list.length
-  )
-}
-/**
- * 是否有空标题
- * @param list 要检查的数组
- */
-function emptyTitle(list: QuestionnaireSubject[]) {
-  return list.every((subject: QuestionnaireSubject) => subject.title?.length)
-}
-/**
  * 题目的阴影
  * @param subject 题目
  */
@@ -259,42 +218,18 @@ function shadow(subject: QuestionnaireSubject) {
     ? '0px 0px 12px rgb(226, 226, 226)'
     : '0px 0px 12px #FD9090'
 }
-/**
- * 拖拽进入该组件时,添加题目事件
- * @param event 拖拽事件
- */
-function dragenter(event: DragEvent) {
-    emit('add-subject')
-}
+
 /**
  * 拖拽离开该组件时,移除题目事件
- * @param event 拖拽事件
  */
-function dragleave(event: DragEvent) {
-    remove(questionnaire.data.subjectList.length - 1)
-
+function dragleave() {
+  remove(questionnaire.data.subjectList.length - 1)
 }
 
-/**
- * 获取题目类型的翻译
- * @param type 题目类型
- */
-function subjectType(type: string | undefined) {
-  if (type === QuestionnaireSupportType.CHECKBOX) {
-    return '多选题'
-  }
-  if (type === QuestionnaireSupportType.RADIO) {
-    return '单选题'
-  }
-  if (type === QuestionnaireSupportType.INPUT) {
-    return '主观题'
-  }
-  return '未定义'
-}
 </script>
 
 <style lang="scss" scoped>
-@import '../style';
+@import "../style";
 
 .questionnaire-designer-container {
   box-sizing: border-box;
@@ -316,6 +251,7 @@ function subjectType(type: string | undefined) {
 .designer-tip-box {
   position: relative;
   margin-top: 20px;
+  padding-top: 10px;
   min-height: 200px;
   border: 1px dashed rgb(150, 150, 150);
   border-radius: $q-border-radius-normal;
@@ -323,9 +259,9 @@ function subjectType(type: string | undefined) {
 
 .designer-tip-box::before {
   position: absolute;
-  content: '点击左侧按钮或拖拽至此处';
+  content: "点击左侧按钮或拖拽至此处";
   left: 50%;
-  top: -10px;
+  top: 0;
   text-align: center;
   height: 20px;
   line-height: 20px;
@@ -341,7 +277,7 @@ function subjectType(type: string | undefined) {
   pointer-events: none;
 }
 
-.title {
+.questionnaire-title {
   margin: 20px 0;
   font-size: 30px;
   font-weight: bold;
