@@ -1,6 +1,6 @@
 <template>
   <div class="edit-container">
-    <div v-if="!empty">
+    <div v-if="questionnaireSubject.data">
       <p class="edit-container_title">
         题目属性
       </p>
@@ -110,15 +110,14 @@
 
 <script setup lang="ts">
 import {
-  Delete,
-  ArrowUpBold,
   ArrowDownBold,
+  ArrowUpBold,
+  Delete,
   Plus,
   Rank
 } from '@element-plus/icons-vue'
-import { computed, PropType, reactive, ref, watch } from 'vue'
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
-import useTopicDesigner from './useTopicDesigner'
+import {PropType, reactive, watch } from 'vue'
+import useTopicDesigner from '../useTopicDesigner'
 import util from '../util'
 
 const props = defineProps({
@@ -128,13 +127,6 @@ const props = defineProps({
   modelValue: {
     type: Object as PropType<QuestionnaireSubject>,
     default: undefined
-  },
-  /**
-   * 是否选中题目
-   */
-  empty: {
-    type: Boolean,
-    default: false
   }
 })
 
@@ -167,7 +159,7 @@ watch(
   { immediate: true }
 )
 
-watch(questionnaireSubject.data, (newValue) => {
+watch(() => questionnaireSubject.data, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
@@ -179,6 +171,9 @@ watch(questionnaireSubject.data, (newValue) => {
 function dragenter(event: DragEvent, index: number) {
   event.preventDefault()
   if (data.dancer === index) {
+    return
+  }
+  if(!questionnaireSubject.data){
     return
   }
   questionnaireSubject.data.options = util.swapPlaces(
@@ -205,7 +200,7 @@ function dragstart(index: number) {
   min-width: 280px;
   padding: 4px 20px;
   margin: 20px 0;
-  overflow-y: auto;
+  overflow-x: hidden;
   pointer-events: all;
   border-radius: $q-border-radius-normal;
   box-shadow: $q-box-shadow-normal;
@@ -256,16 +251,17 @@ function dragstart(index: number) {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
+
+  &::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    font-size: 22px;
+    text-align: center;
+    content: "没有选中的组件";
+    transform: translate(-50%, -50%);
+  }
 }
 
-.panel-empty-view::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  font-size: 22px;
-  text-align: center;
-  content: "没有选中的组件";
-  transform: translate(-50%, -50%);
-}
 </style>

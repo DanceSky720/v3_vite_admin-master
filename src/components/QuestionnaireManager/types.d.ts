@@ -21,5 +21,5 @@ type QuestionnaireManagerData = {
   /**
    * 问卷
    */
-  questionnaire: Questionnaire
+  questionnaire: Questionnaire | undefined
 }

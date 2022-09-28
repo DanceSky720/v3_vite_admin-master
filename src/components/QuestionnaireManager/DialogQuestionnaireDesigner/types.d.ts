@@ -3,6 +3,10 @@
  */
 type DialogQuestionnaireDesignerData = {
   /**
+   * 问卷
+   */
+  questionnaire: questionnaire | undefined
+  /**
    * 显隐控制
    */
   open: boolean

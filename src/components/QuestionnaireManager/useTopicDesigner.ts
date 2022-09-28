@@ -1,10 +1,10 @@
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import { QuestionnaireSupportType } from '../../entity/enum/QuestionnaireSupportType.entity'
 import { computed, reactive } from 'vue'
-import util from '../util'
+import util from './util'
 
 function useTopicDesigner() {
   const questionnaireSubject = reactive({
-    data: {} as QuestionnaireSubject,
+    data: {} as QuestionnaireSubject | undefined
   })
 
   /**

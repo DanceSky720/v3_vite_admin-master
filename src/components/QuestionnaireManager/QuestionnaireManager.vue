@@ -86,7 +86,7 @@ const innerData: QuestionnaireManagerData = reactive({
   innerCurrentPage: 1,
   show: false,
   questionnaireList: [],
-  questionnaire: {} as Questionnaire
+  questionnaire: undefined
 })
 
 const emit = defineEmits(['update:currentPage', 'reload', 'query'])
@@ -103,8 +103,7 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(
-  () => innerData.innerCurrentPage,
+watch(() => innerData.innerCurrentPage,
   (newValue) => {
     emit('update:currentPage', newValue)
   }
@@ -115,9 +114,7 @@ watch(
  */
 function edit(index: number) {
   innerData.active = index
-  innerData.questionnaire = cloneDeep(
-    innerData.questionnaireList[innerData.active]
-  )
+  innerData.questionnaire = cloneDeep(innerData.questionnaireList[index])
   innerData.show = true
 }
 /**
@@ -148,7 +145,9 @@ function createQuestionnaire() {
  * 保存按钮点击
  */
 function save() {
-  props.saveFunc(innerData.questionnaire)
+  if(innerData.questionnaire){
+    props.saveFunc(innerData.questionnaire)
+  }
   innerData.show = false
 }
 /**

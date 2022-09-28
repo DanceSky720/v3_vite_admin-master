@@ -1,10 +1,10 @@
 import { computed, reactive } from 'vue'
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
-import util from '../util'
+import { QuestionnaireSupportType } from '../../entity/enum/QuestionnaireSupportType.entity'
+import util from './util'
 
 function useQuestionnaireDesigner() {
   const questionnaire = reactive({
-    data: {} as Questionnaire,
+    data: {} as Questionnaire | undefined,
   })
   /**
    * 上移题目

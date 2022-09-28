@@ -8,8 +8,6 @@
 
 ### 2.1 Props
 
-v-model = modelValue / v-model
-
 | 参数    | 说明 | 类型   | 默认值    | 引入版本 |
 | ------- | ---- | ------ | --------- | -------- |
 | v-model | 题目 | object | undefined | 0.1.0    |
@@ -19,3 +17,5 @@ v-model = modelValue / v-model
 无
 
 ## 4. 测试计划 👻
+
+1. 如果有一个空的题目能否禁止添加新题目

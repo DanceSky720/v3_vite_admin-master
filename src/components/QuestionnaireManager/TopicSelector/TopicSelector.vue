@@ -33,7 +33,7 @@ import { Rank } from '@element-plus/icons-vue'
 import { reactive, watch } from 'vue'
 const props = defineProps({
   /**
-   * 类型
+   * 选中的类型
    */
   modelValue: {
     type: String,
@@ -50,13 +50,16 @@ const data: TopicSelectorData = reactive({
 })
 const emit = defineEmits(['chosen', 'update:modelValue'])
 
-watch(() => props.modelValue, (newValue) => {
+watch(() => props.modelValue,
+  (newValue) => {
     data.dancer = newValue
   }
 )
-watch(() => data.dancer, (newValue) => {
-  emit('update:modelValue', newValue)
-})
+watch(() => data.dancer,
+  (newValue) => {
+    emit('update:modelValue', newValue)
+  }
+)
 
 /**
  * 提交选择事件
@@ -88,10 +91,10 @@ function submit(index: number, submit: boolean) {
 }
 
 .selector-transition-group {
-  transition: all;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: all;
 }
 
 .components-title {
