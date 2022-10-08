@@ -1,10 +1,10 @@
 import { computed, reactive } from 'vue'
-import { QuestionnaireSupportType } from '../../entity/enum/QuestionnaireSupportType.entity'
-import util from './util'
+import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
+import util from '../util'
 
 function useQuestionnaireDesigner() {
   const questionnaire = reactive({
-    data: {} as Questionnaire | undefined,
+    data: undefined as Questionnaire | undefined,
   })
   /**
    * 上移题目
@@ -68,7 +68,7 @@ function useQuestionnaireDesigner() {
    */
   function hasUniqueTitle(list: QuestionnaireSubject[]) {
     return (
-      new Set(list.map((subject: QuestionnaireSubject) => subject.title))
+      new Set(list.map((subject: QuestionnaireSubject) => subject?.title))
         .size === list.length
     )
   }
@@ -77,7 +77,7 @@ function useQuestionnaireDesigner() {
    * @param list 要检查的数组
    */
   function emptyTitle(list: QuestionnaireSubject[]) {
-    return list.every((subject: QuestionnaireSubject) => subject.title?.length)
+    return list.every((subject: QuestionnaireSubject) => subject?.title?.length)
   }
 
   return {
@@ -86,7 +86,7 @@ function useQuestionnaireDesigner() {
     downward,
     remove,
     allow,
-    subjectType
+    subjectType,
   }
 }
 

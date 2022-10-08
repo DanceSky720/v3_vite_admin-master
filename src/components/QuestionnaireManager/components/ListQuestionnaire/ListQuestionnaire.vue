@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
+import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
 import { Edit, Search } from '@element-plus/icons-vue'
 import { PropType } from 'vue'
 defineProps({
@@ -94,7 +94,7 @@ defineEmits(['edit', 'view'])
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import "../../style";
 
 .list-container {
   box-sizing: border-box;

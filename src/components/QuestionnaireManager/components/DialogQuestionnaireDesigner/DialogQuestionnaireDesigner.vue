@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
 import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 import TopicSelector from '../TopicSelector/TopicSelector.vue'
@@ -64,10 +64,9 @@ const data: DialogQuestionnaireDesignerData = reactive({
 })
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
-watch(
-  [() => props.modelValue, () => props.show],
-  ([modelValue, show]) => {
-    data.questionnaire = modelValue
+watch([() => props.modelValue, () => props.show],
+  ([mv, show]) => {
+    data.questionnaire = mv
     data.open = show
   },
   { immediate: true, deep: true }
@@ -86,7 +85,7 @@ watch(() => data.open, (newValue) => {
  */
 function addSubject(type: QuestionnaireSupportType) {
   data.questionnaire.subjectList.push({
-    id: new Date().getTime().toString(),
+    id: new Date().getTime().toString(), //只在创建时使用
     title: undefined,
     serialNumber: undefined,
     type: type,

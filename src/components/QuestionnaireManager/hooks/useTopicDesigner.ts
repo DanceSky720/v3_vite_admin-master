@@ -1,10 +1,10 @@
-import { QuestionnaireSupportType } from '../../entity/enum/QuestionnaireSupportType.entity'
+import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
 import { computed, reactive } from 'vue'
-import util from './util'
+import util from '../util'
 
 function useTopicDesigner() {
   const questionnaireSubject = reactive({
-    data: {} as QuestionnaireSubject | undefined
+    data: undefined as QuestionnaireSubject | undefined
   })
 
   /**
@@ -34,7 +34,7 @@ function useTopicDesigner() {
    */
   function addOption() {
     questionnaireSubject.data.options.push({
-      id: new Date().getTime().toString(),
+      id: new Date().getTime().toString(), //只在创建时使用 
       title: '',
       serialNumber: undefined,
       explain: undefined,
@@ -70,11 +70,10 @@ function useTopicDesigner() {
     const hasTitle = questionnaireSubject.data.options.every(
       (option: SubjectOption) => option.title !== ''
     )
-    const checkArray: Array<boolean> = [
+    return [
       hasTitle,
       questionnaireSubject.data.options.length < 4,
-    ]
-    return checkArray.every((pass: boolean) => pass)
+    ].every((pass: boolean) => pass)
   })
 
   return {

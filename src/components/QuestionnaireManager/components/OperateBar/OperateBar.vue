@@ -46,7 +46,7 @@ defineEmits(['reload', 'create', 'query'])
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import "../../style";
 
 .bar-container {
   box-sizing: border-box;

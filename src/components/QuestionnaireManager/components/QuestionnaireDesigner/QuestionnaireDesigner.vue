@@ -171,9 +171,9 @@ import {
   Delete,
   Search
 } from '@element-plus/icons-vue'
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
-import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
-import useQuestionnaireDesigner from '../useQuestionnaireDesigner'
+import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
+import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
+import useQuestionnaireDesigner from '../../hooks/useQuestionnaireDesigner'
 import { PropType, watch } from 'vue'
 const props = defineProps({
   /**
@@ -238,7 +238,7 @@ function dragleave() {
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import "../../style";
 
 .questionnaire-designer-container {
   box-sizing: border-box;
@@ -354,7 +354,9 @@ function dragleave() {
     position: absolute;
     top: 50%;
     left: 50%;
-    content: "点击左侧查看按钮预览问卷详情";
+    content: "无数据";
+    color: #808080;
+    font-size: 22px;
     transform: translate(-50%, -50%);
   }
 }

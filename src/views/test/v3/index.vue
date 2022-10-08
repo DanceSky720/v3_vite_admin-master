@@ -1,12 +1,10 @@
 <template>
   <div class="container">
-    <Draw></Draw>
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, toRefs, watch } from 'vue'
-import Draw from './components/draw/index.vue';
 
 </script>
 

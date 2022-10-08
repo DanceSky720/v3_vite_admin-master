@@ -1,6 +1,6 @@
 <template>
   <div class="edit-container">
-    <div v-if="questionnaireSubject.data">
+    <div v-if="modelValue">
       <p class="edit-container_title">
         题目属性
       </p>
@@ -38,7 +38,7 @@
             class="transition-group"
           >
             <div
-              v-for="(option, index) in questionnaireSubject.data.options"
+              v-for="(option, index) in questionnaireSubject?.data?.options"
               :key="option.id ?? option.title"
               draggable="true"
               class="options"
@@ -116,9 +116,9 @@ import {
   Plus,
   Rank
 } from '@element-plus/icons-vue'
-import {PropType, reactive, watch } from 'vue'
-import useTopicDesigner from '../useTopicDesigner'
-import util from '../util'
+import { PropType, reactive, watch } from 'vue'
+import useTopicDesigner from '../../hooks/useTopicDesigner'
+import util from '../../util'
 
 const props = defineProps({
   /**
@@ -149,19 +149,19 @@ const {
 
 const emit = defineEmits(['update:modelValue'])
 
-watch(
-  () => props.modelValue,
-  (modelValue) => {
-    if (modelValue) {
-      questionnaireSubject.data = modelValue
+watch(() => props.modelValue,(mv) => {
+    if (mv) {
+      questionnaireSubject.data = mv
     }
   },
   { immediate: true }
 )
 
-watch(() => questionnaireSubject.data, (newValue) => {
-  emit('update:modelValue', newValue)
-})
+watch(() => questionnaireSubject.data,
+  (newValue) => {
+    emit('update:modelValue', newValue)
+  }
+)
 
 /**
  * 拖拽进入时,交换值
@@ -173,7 +173,7 @@ function dragenter(event: DragEvent, index: number) {
   if (data.dancer === index) {
     return
   }
-  if(!questionnaireSubject.data){
+  if (!questionnaireSubject.data) {
     return
   }
   questionnaireSubject.data.options = util.swapPlaces(
@@ -194,7 +194,7 @@ function dragstart(index: number) {
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import '../../style';
 
 .edit-container {
   min-width: 280px;
@@ -259,9 +259,8 @@ function dragstart(index: number) {
     width: 100%;
     font-size: 22px;
     text-align: center;
-    content: "没有选中的组件";
+    content: '没有选中的组件';
     transform: translate(-50%, -50%);
   }
 }
-
 </style>

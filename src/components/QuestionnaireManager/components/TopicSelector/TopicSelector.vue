@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionnaireSupportType } from '../../../entity/enum/QuestionnaireSupportType.entity'
+import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
 import { Rank } from '@element-plus/icons-vue'
 import { reactive, watch } from 'vue'
 const props = defineProps({
@@ -79,7 +79,7 @@ function submit(index: number, submit: boolean) {
 </script>
 
 <style lang="scss" scoped>
-@import "../style";
+@import "../../style";
 
 .selector-container {
   min-width: 180px;

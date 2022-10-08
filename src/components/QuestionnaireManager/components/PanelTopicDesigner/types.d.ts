@@ -7,7 +7,7 @@ type PanelTopicDesignerData = {
    */
   dancer: number
   /**
-   * 拖动中
+   * 是否拖动中
    */
   dancing: boolean
 }
