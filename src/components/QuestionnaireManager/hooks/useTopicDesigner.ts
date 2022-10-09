@@ -47,7 +47,7 @@ function useTopicDesigner() {
    * @param index 要移除的元素下标
    */
   function remove(index: number) {
-    questionnaireSubject.data.options.splice(index, 1)
+    questionnaireSubject.data.options = util.remove(questionnaireSubject.data.options, index)
   }
 
   /**

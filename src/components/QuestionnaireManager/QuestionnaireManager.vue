@@ -38,9 +38,10 @@
 import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
 import { cloneDeep } from 'lodash-es'
 import { PropType, reactive, watch } from 'vue'
-import { default as DialogQuestionnaireDesigner, default as QuestionnaireDesigner } from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
 import ListQuestionnaire from './components/ListQuestionnaire/ListQuestionnaire.vue'
 import OperateBar from './components/OperateBar/OperateBar.vue'
+import DialogQuestionnaireDesigner from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
+import QuestionnaireDesigner from './components/QuestionnaireDesigner/QuestionnaireDesigner.vue'
 const props = defineProps({
   /**
    * 问卷数据

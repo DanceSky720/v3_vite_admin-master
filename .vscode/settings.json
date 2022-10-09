@@ -1,0 +1,27 @@
+{
+  "editor.fontSize": 20,
+  "merge-conflict.autoNavigateNextConflict.enabled": true,
+  "varTranslation.translationEngine": "baidu",
+  "css.format.spaceAroundSelectorSeparator": true,
+  "less.format.spaceAroundSelectorSeparator": true,
+  "search.actionsPosition": "right",
+  "search.searchEditor.reusePriorSearchConfiguration": false,
+  "breadcrumbs.enabled": true,
+  "breadcrumbs.icons": true,
+  "workbench.editor.autoLockGroups": {
+    "default": true,
+    "vscode.markdown.preview.editor": true
+  },
+  "screencastMode.onlyKeyboardShortcuts": false,
+  "window.autoDetectColorScheme": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "diffEditor.renderMarginRevertIcon": true,
+  "editor.minimap.renderCharacters": true,
+  "editor.minimap.maxColumn": 120,
+  "editor.minimap.scale": 1,
+  "editor.minimap.showSlider": "mouseover",
+  "editor.minimap.side": "right",
+  "editor.minimap.size": "proportional",
+  "files.simpleDialog.enable": false
+}

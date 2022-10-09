@@ -30,5 +30,6 @@ export default defineConfig({
         emptyOutDir: false,
         outDir: "dist",
         assetsDir: "static"
-    }
+    },
+    extensions: [".js", ".ts", ".tsx", ".jsx"]
 });

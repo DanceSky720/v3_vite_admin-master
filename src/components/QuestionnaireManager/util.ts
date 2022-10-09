@@ -43,7 +43,9 @@ function upwardOverload<T>(array: T[]): T[] {
  * @returns 交换过的数组
  */
 function upwards<T>(array: T[], wanna: number): T[] {
-  return wanna === 0 ? upwardOverload(array) : swapPlaces(array, wanna, wanna - 1)
+  return wanna === 0
+    ? upwardOverload(array)
+    : swapPlaces(array, wanna, wanna - 1)
 }
 /**
  * 数组元素下移,如果这个要下移的元素下标位置在数组最后一位,则将其置顶
@@ -57,9 +59,28 @@ function downward<T>(array: T[], wanna: number): T[] {
   }
   return swapPlaces(array, wanna, wanna + 1)
 }
+/**
+ * 移除数组指定下标的元素
+ * @param array 要改变的数组
+ * @param index 要交换的元素下标
+ * @returns 改变过的数组
+ */
+function remove<T>(array: T[], index: number): (T | undefined)[] {
+  return array.map((item: T, i: number) => {
+    if (i < index) {
+      return item
+    }
+    if (i >= index && i < array.length - 1) {
+      return array[i + 1]
+    }
+  }).filter((item: T | undefined) =>
+    item !== undefined && item !== null
+  )
+}
 
 export default {
   upwards,
   downward,
-  swapPlaces
+  swapPlaces,
+  remove
 }

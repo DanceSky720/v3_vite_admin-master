@@ -4,7 +4,7 @@ import util from '../util'
 
 function useQuestionnaireDesigner() {
   const questionnaire = reactive({
-    data: undefined as Questionnaire | undefined,
+    data: undefined as Questionnaire | undefined
   })
   /**
    * 上移题目
@@ -31,7 +31,7 @@ function useQuestionnaireDesigner() {
    * @param index 要移除的元素下标
    */
   function remove(index: number) {
-    questionnaire.data.subjectList.splice(index, 1)
+    questionnaire.data.subjectList = util.remove(questionnaire.data.subjectList, index)
   }
   /**
    * 是否允许点击保存按钮
@@ -42,7 +42,7 @@ function useQuestionnaireDesigner() {
       emptyTitle(questionnaire.data.subjectList),
       questionnaire.data.subjectList.length > 0,
       questionnaire.data.title ? questionnaire.data.title.length > 0 : false,
-      questionnaire.data.type ? questionnaire.data.type.length > 0 : false,
+      questionnaire.data.type ? questionnaire.data.type.length > 0 : false
     ]
     return checkArray.every((pass: boolean) => pass)
   })
@@ -86,7 +86,7 @@ function useQuestionnaireDesigner() {
     downward,
     remove,
     allow,
-    subjectType,
+    subjectType
   }
 }
 
