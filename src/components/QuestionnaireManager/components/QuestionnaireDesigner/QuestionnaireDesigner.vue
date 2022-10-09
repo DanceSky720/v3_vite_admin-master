@@ -37,7 +37,6 @@
           label="问卷类型"
           :disabled="preview"
         >
-        
           <el-select
             v-model="questionnaire.data.type"
             placeholder="选择问卷类型"
@@ -269,8 +268,9 @@ function dragleave() {
 
 .designer-tip-box::before {
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 50%;
+  z-index: 9999998;
   box-sizing: border-box;
   height: 20px;
   line-height: 20px;
@@ -279,7 +279,7 @@ function dragleave() {
   content: "点击左侧按钮或拖拽至此处";
   background: #fff;
   border-radius: $q-border-radius-normal;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .events-none > * {
@@ -307,6 +307,8 @@ function dragleave() {
 }
 
 .subject {
+  position: relative;
+  z-index: 99999999;
   box-sizing: border-box;
   width: 96%;
   padding: 20px;
@@ -354,9 +356,9 @@ function dragleave() {
     position: absolute;
     top: 50%;
     left: 50%;
-    content: "无数据";
-    color: #808080;
     font-size: 22px;
+    color: #808080;
+    content: "无数据";
     transform: translate(-50%, -50%);
   }
 }
