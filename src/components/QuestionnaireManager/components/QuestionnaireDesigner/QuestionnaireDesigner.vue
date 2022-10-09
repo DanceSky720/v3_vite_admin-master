@@ -87,6 +87,7 @@
           v-for="(subject, index) in questionnaire.data.subjectList"
           :key="subject.id"
           :style="{ boxShadow: shadow(subject) }"
+          :class="preview ? '' : 'relative-subject'"
           class="subject"
         >
           <div class="subject-title">
@@ -306,8 +307,11 @@ function dragleave() {
   margin-bottom: 10px;
 }
 
-.subject {
+.relative-subject {
   position: relative;
+}
+
+.subject {
   z-index: 99999999;
   box-sizing: border-box;
   width: 96%;
