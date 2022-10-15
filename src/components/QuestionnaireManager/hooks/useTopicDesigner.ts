@@ -1,19 +1,16 @@
 import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import util from '../util'
 
 function useTopicDesigner() {
-  const questionnaireSubject = reactive({
-    data: undefined as QuestionnaireSubject | undefined
-  })
-
+  const questionnaireSubject = ref<QuestionnaireSubject | undefined | null>()
   /**
    * 上移选项
    * @param index 要上移的元素下标
    */
   function upwards(index: number) {
-    questionnaireSubject.data.options = util.upwards<SubjectOption>(
-      questionnaireSubject.data.options,
+    questionnaireSubject.value.options = util.upwards<SubjectOption>(
+      questionnaireSubject.value.options,
       index
     )
   }
@@ -23,8 +20,8 @@ function useTopicDesigner() {
    * @param index 要下移的元素下标
    */
   function downward(index: number) {
-    questionnaireSubject.data.options = util.downward<SubjectOption>(
-      questionnaireSubject.data.options,
+    questionnaireSubject.value.options = util.downward<SubjectOption>(
+      questionnaireSubject.value.options,
       index
     )
   }
@@ -33,7 +30,7 @@ function useTopicDesigner() {
    * 添加选项
    */
   function addOption() {
-    questionnaireSubject.data.options.push({
+    questionnaireSubject.value.options.push({
       id: new Date().getTime().toString(), //只在创建时使用 
       title: '',
       serialNumber: undefined,
@@ -47,7 +44,7 @@ function useTopicDesigner() {
    * @param index 要移除的元素下标
    */
   function remove(index: number) {
-    questionnaireSubject.data.options = util.remove(questionnaireSubject.data.options, index)
+    questionnaireSubject.value.options = util.remove<SubjectOption>(questionnaireSubject.value.options, index)
   }
 
   /**
@@ -56,9 +53,9 @@ function useTopicDesigner() {
   const selective = computed(() => {
     if (questionnaireSubject) {
       return (
-        questionnaireSubject?.data?.type ===
+        questionnaireSubject?.value?.type ===
           QuestionnaireSupportType.CHECKBOX ||
-        questionnaireSubject?.data?.type === QuestionnaireSupportType.RADIO
+        questionnaireSubject?.value?.type === QuestionnaireSupportType.RADIO
       )
     }
   })
@@ -67,12 +64,12 @@ function useTopicDesigner() {
    * 是否允许添加新的选项
    */
   const allow = computed(() => {
-    const hasTitle = questionnaireSubject.data.options.every(
+    const hasTitle = questionnaireSubject.value.options.every(
       (option: SubjectOption) => option.title !== ''
     )
     return [
       hasTitle,
-      questionnaireSubject.data.options.length < 4,
+      questionnaireSubject.value.options.length < 4,
     ].every((pass: boolean) => pass)
   })
 

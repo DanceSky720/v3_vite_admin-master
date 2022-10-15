@@ -2,25 +2,37 @@
   <el-dialog
     v-model="data.open"
     title="问卷编辑面板"
-    width="90%"
+    width="80%"
     :before-close="handleClose"
   >
-    <div class="dialog-container">
-      <TopicSelector
-        v-model="data.dancer"
-        @chosen="addSubject"
-      />
+    <div
+      v-if="data.questionnaire"
+      class="dialog-container"
+    >
+      <div class="dialog-container-left">
+        <TopicSelector
+          v-model="data.dancer"
+          @chosen="addSubject"
+        />
+        <PanelTopicDesigner
+          v-model="data.questionnaire.subjectList[data.currentIndex]"
+          class="dialog-container-left-designer"
+        />
+      </div>
       <QuestionnaireDesigner
         v-model="data.questionnaire"
-        :questionnaire-type="questionnaireType"
         @save="$emit('save')"
         @add-subject="addSubject(data.dancer as QuestionnaireSupportType)"
+        @dragleave="dragleave()"
         @view="data.currentIndex = $event"
-      />
-      <PanelTopicDesigner
-        v-model="data.questionnaire.subjectList[data.currentIndex]"
+        @close="handleClose"
+        @reset="reborn"
       />
     </div>
+    <div
+      v-else
+      class="dialog-container-empty-view"
+    />
   </el-dialog>
 </template>
 
@@ -31,13 +43,15 @@ import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 import TopicSelector from '../TopicSelector/TopicSelector.vue'
 import { PropType, reactive, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
+import util from '../../util'
+import { QuestionnaireStatus } from '../../../../entity/enum/QuestionnaireStatus.entity'
 
 const props = defineProps({
   /**
    * 问卷
    */
   modelValue: {
-    type: Object as PropType<Questionnaire>,
+    type: Object as PropType<QuestionnaireEditorialVersion>,
     default: undefined
   },
   /**
@@ -46,13 +60,6 @@ const props = defineProps({
   show: {
     type: Boolean,
     default: false
-  },
-  /**
-   * 问卷类型数组
-   */
-  questionnaireType: {
-    type: Array as PropType<questionnaireType[]>,
-    default: []
   }
 })
 
@@ -64,19 +71,22 @@ const data: DialogQuestionnaireDesignerData = reactive({
 })
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
-watch([() => props.modelValue, () => props.show],
-  ([mv, show]) => {
-    data.questionnaire = mv
+watch(
+  [() => props.modelValue, () => props.show],
+  ([questionnaire, show]) => {
+    data.questionnaire = questionnaire
     data.open = show
   },
   { immediate: true, deep: true }
 )
 
-watch(data.questionnaire, (newValue) => {
+watch(() => data.questionnaire, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
-watch(() => data.open, (newValue) => {
+watch(
+  () => data.open,
+  (newValue) => {
     emit('update:show', newValue)
   }
 )
@@ -84,19 +94,59 @@ watch(() => data.open, (newValue) => {
  * 添加一个问卷项目
  */
 function addSubject(type: QuestionnaireSupportType) {
-  data.questionnaire.subjectList.push({
-    id: new Date().getTime().toString(), //只在创建时使用
+  if (!type) {
+    return
+  }
+  if (!data?.questionnaire?.subjectList) {
+    return
+  }
+  data?.questionnaire?.subjectList.push({
+    id: undefined,
     title: undefined,
     serialNumber: undefined,
     type: type,
-    options: []
+    options: [],
+    rid: new Date().getTime()
   })
   data.currentIndex = data.questionnaire.subjectList.length - 1
+}
+/**
+ * 拖拽离开该组件时,移除题目事件
+ */
+function dragleave() {
+  if (!(data.dancer.length > 0)) {
+    return
+  }
+  if (data.questionnaire) {
+    data.questionnaire.subjectList = util.remove<QuestionnaireSubjectEditorialVersion>(data.questionnaire.subjectList, data.questionnaire.subjectList.length - 1)
+  }
+}
+
+/**
+ * 重置组件数据
+ */
+function reborn() {
+  data.questionnaire = {
+    id: undefined,
+    title: undefined,
+    details: undefined,
+    totalScore: undefined,
+    isEnable: QuestionnaireStatus.ALIVE, // 默认启用
+    createDate: undefined,
+    lastUpdateUserName: undefined,
+    lastUpdateDate: undefined,
+    type: undefined,
+    subjectList: []
+  }
 }
 /**
  * 关闭前处理函数
  */
 async function handleClose() {
+  if (!props.modelValue) {
+    emit('close')
+    return
+  }
   try {
     const res = await ElMessageBox.confirm('问卷未保存', '提示', {
       confirmButtonText: '确定',
@@ -116,5 +166,31 @@ async function handleClose() {
 .dialog-container {
   display: flex;
   transition: all 1s;
+
+    &-left {
+    display: flex;
+    flex-direction: column;
+
+    &-designer {
+      flex: 1;
+    }
+  }
+}
+
+.dialog-container-empty-view {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 400px;
+
+  &::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 22px;
+    color: #808080;
+    content: "无绑定的问卷无数据";
+    transform: translate(-50%, -50%);
+  }
 }
 </style>

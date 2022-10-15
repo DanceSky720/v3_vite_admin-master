@@ -1,10 +1,10 @@
 <template>
   <div class="questionnaire-designer-container">
-    <div v-if="questionnaire.data">
+    <div v-if="questionnaire">
       <div class="questionnaire-title">
         <el-input
           v-if="!preview"
-          v-model="questionnaire.data.title"
+          v-model="questionnaire.title"
           :disabled="preview"
           class="title-input"
           show-word-limit
@@ -12,53 +12,9 @@
           size="large"
         />
         <p v-else>
-          {{ questionnaire.data.title }}
+          {{ questionnaire.title }}
         </p>
       </div>
-      <el-form inline>
-        <el-form-item
-          v-if="!preview"
-          label="是否启用"
-        >
-          <el-radio-group
-            v-model="questionnaire.data.isEnable"
-            :disabled="preview"
-          >
-            <el-radio :label="QuestionnaireStatus.ALIVE">
-              是
-            </el-radio>
-            <el-radio :label="QuestionnaireStatus.SILENCE">
-              否
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item
-          v-if="!preview"
-          label="问卷类型"
-          :disabled="preview"
-        >
-          <el-select
-            v-model="questionnaire.data.type"
-            placeholder="选择问卷类型"
-          >
-            <el-option
-              v-for="item in questionnaireType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-input
-          v-if="!preview"
-          v-model="questionnaire.data.details"
-          class="questionnaire-details"
-          :rows="3"
-          :disabled="preview"
-          type="textarea"
-          placeholder="问卷说明"
-        />
-      </el-form>
       <div
         v-if="!preview"
         class="btn-group"
@@ -73,6 +29,22 @@
         >
           保存
         </el-button>
+        <el-button
+          class="btn"
+          :icon="Close"
+          plain
+          @click="$emit('close')"
+        >
+          取消
+        </el-button>
+               <el-button
+          class="btn"
+          :icon="Pear"
+          plain
+          @click="$emit('reset')"
+        >
+          重置
+        </el-button>
       </div>
       <TransitionGroup
         id="questionnaire-designer-transition-group"
@@ -81,11 +53,11 @@
         tag="div"
         @dragenter="$emit('add-subject')"
         @dragover="$event.preventDefault()"
-        @dragleave="dragleave()"
+        @dragleave="$emit('dragleave')"
       >
         <div
-          v-for="(subject, index) in questionnaire.data.subjectList"
-          :key="subject.id"
+          v-for="(subject, index) in questionnaire?.subjectList"
+          :key="subject.rid"
           :style="{ boxShadow: shadow(subject) }"
           :class="preview ? '' : 'relative-subject'"
           class="subject"
@@ -169,10 +141,11 @@ import {
   DocumentAdd,
   ArrowUpBold,
   Delete,
-  Search
+  Search,
+  Close,
+  Pear
 } from '@element-plus/icons-vue'
 import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
-import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
 import useQuestionnaireDesigner from '../../hooks/useQuestionnaireDesigner'
 import { PropType, watch } from 'vue'
 const props = defineProps({
@@ -180,7 +153,7 @@ const props = defineProps({
    * 问卷
    */
   modelValue: {
-    type: Object as PropType<Questionnaire>,
+    type: Object as PropType<QuestionnaireEditorialVersion>,
     default: undefined
   },
   /**
@@ -189,29 +162,22 @@ const props = defineProps({
   preview: {
     type: Boolean,
     default: false
-  },
-  /**
-   * 问卷类型数组
-   */
-  questionnaireType: {
-    type: Array as PropType<questionnaireType[]>,
-    default: []
   }
 })
 
 const { questionnaire, upwards, downward, remove, allow, subjectType } =
   useQuestionnaireDesigner()
 
-const emit = defineEmits(['update:modelValue', 'save', 'add-subject', 'view'])
+const emit = defineEmits(['update:modelValue', 'save', 'add-subject', 'view', 'dragleave', 'close', 'reset'])
 
 watch(() => props.modelValue,
   (newValue) => {
-    questionnaire.data = newValue
+    questionnaire.value = newValue
   },
   { immediate: true, deep: true }
 )
 
-watch(() => questionnaire.data,
+watch(() => questionnaire,
   (newValue) => {
     emit('update:modelValue', newValue)
   }
@@ -226,21 +192,13 @@ function shadow(subject: QuestionnaireSubject) {
     ? '0px 0px 12px rgb(226, 226, 226)'
     : '0px 0px 12px #FD9090'
 }
-
-/**
- * 拖拽离开该组件时,移除题目事件
- */
-function dragleave() {
-  if (questionnaire.data) {
-    remove(questionnaire.data.subjectList.length - 1)
-  }
-}
 </script>
 
 <style lang="scss" scoped>
 @import "../../style";
 
 .questionnaire-designer-container {
+  width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

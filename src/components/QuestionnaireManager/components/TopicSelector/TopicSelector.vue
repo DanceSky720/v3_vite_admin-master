@@ -43,8 +43,9 @@ const props = defineProps({
 
 const data: TopicSelectorData = reactive({
   supportedComponents: [
-    ['单项选择', QuestionnaireSupportType.RADIO],
-    ['多项选择', QuestionnaireSupportType.CHECKBOX]
+    ['单选题', QuestionnaireSupportType.RADIO],
+    ['多选题', QuestionnaireSupportType.CHECKBOX],
+    ['填空题', QuestionnaireSupportType.INPUT]
   ],
   dancer: ''
 })
@@ -68,9 +69,11 @@ watch(() => data.dancer,
  */
 function submit(index: number, submit: boolean) {
   const type = data.supportedComponents[index]
+  data.dancer = type[1]
   if (submit) {
     emit('chosen', type[1])
   }
+  data.dancer = ''
   data.supportedComponents.splice(index, 1)
   window.setTimeout(() => {
     data.supportedComponents.push(type)
@@ -82,9 +85,10 @@ function submit(index: number, submit: boolean) {
 @import "../../style";
 
 .selector-container {
-  min-width: 180px;
+  min-width: 380px;
+  max-width: 460px;
   padding: 16px 8px;
-  margin: 20px;
+  margin: 10px;
   background: #fff;
   border-radius: $q-border-radius-normal;
   box-shadow: $q-box-shadow-normal;
@@ -92,9 +96,9 @@ function submit(index: number, submit: boolean) {
 
 .selector-transition-group {
   display: flex;
-  flex-direction: column;
   align-items: center;
   transition: all;
+  flex-wrap: wrap;
 }
 
 .components-title {

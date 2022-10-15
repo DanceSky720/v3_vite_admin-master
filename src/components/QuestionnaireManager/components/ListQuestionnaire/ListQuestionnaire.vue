@@ -1,13 +1,43 @@
 <template>
   <div class="list-container">
+    <div class="list-container_ground">
+      <p>问卷列表</p>
+      <div>
+        <el-button
+          class="list-btn"
+          :icon="Delete"
+          type="danger"
+          :disabled="allow"
+          plain
+          @click="$emit('remove')"
+        >
+          批量删除
+        </el-button>
+        <el-button
+          class="list-btn"
+          :icon="Plus"
+          type="primary"
+          @click="$emit('create')"
+        >
+          创建问卷
+        </el-button>
+      </div>
+    </div>
     <el-table
       :data="data"
       stripe
       highlight-current-row
+      @selection-change="selected = $event"
     >
       <el-table-column
+        type="selection"
+        align="center"
+      />
+      <el-table-column
+        label="序号"
         type="index"
         align="center"
+        width="80"
       />
       <el-table-column
         label="ID"
@@ -43,19 +73,27 @@
       <el-table-column
         label="操作"
         align="center"
+        width="250"
       >
         <template #default="{ $index }">
           <el-button
             class="list-btn"
             :icon="Search"
             plain
-            @click="$emit('view', $index)"
+            @click="$emit('view', data[$index].id )"
           />
           <el-button
             class="list-btn"
             :icon="Edit"
             plain
-            @click="$emit('edit', $index)"
+            @click="$emit('edit', data[$index].id )"
+          />
+          <el-button
+            class="list-btn"
+            :icon="Delete"
+            type="danger"
+            plain
+            @click="$emit('remove', data[$index].id )"
           />
         </template>
       </el-table-column>
@@ -65,8 +103,8 @@
 
 <script setup lang="ts">
 import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
-import { Edit, Search } from '@element-plus/icons-vue'
-import { PropType } from 'vue'
+import { Edit, Search, Delete, Plus } from '@element-plus/icons-vue'
+import { computed, PropType, ref } from 'vue'
 defineProps({
   /**
    * 问卷列表
@@ -75,6 +113,18 @@ defineProps({
     type: Array as PropType<Questionnaire[]>,
     default: []
   }
+})
+
+const selected = ref<Questionnaire[]>()
+
+/**
+ * 是否允许点击批量删除
+ */
+const allow = computed(()=>{
+  if(selected.value){
+    return selected.value.length < 1
+  }
+  return true
 })
 
 /**
@@ -90,11 +140,16 @@ const enableCell = (isEnable: number) => {
   }
 }
 
-defineEmits(['edit', 'view'])
+defineEmits(['edit', 'view', 'remove', 'create'])
+
+function change(selection){
+console.log(selection);
+
+}
 </script>
 
 <style lang="scss" scoped>
-@import "../../style";
+@import '../../style';
 
 .list-container {
   box-sizing: border-box;
@@ -103,9 +158,16 @@ defineEmits(['edit', 'view'])
   scrollbar-width: none;
   background: #fff;
   box-shadow: $q-box-shadow-normal;
+
+  &_ground {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+    color: rgb(49, 49, 49);
+  }
 }
 
-.list-btn {
-  margin: 0 2px;
-}
 </style>

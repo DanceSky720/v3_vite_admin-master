@@ -1,33 +1,26 @@
 <template>
   <div class="manager-container">
-    <div class="left">
-      <OperateBar
-        @create="createQuestionnaire"
-        @reload="$emit('reload')"
-        @query="$emit('query', $event)"
-      />
-      <ListQuestionnaire
-        :data="innerData.questionnaireList"
-        @edit="edit"
-        @view="innerData.active = $event"
-      />
-      <el-pagination
-        v-model:currentPage="innerData.innerCurrentPage"
-        class="manager-pagination"
-        :page-size="pageSize"
-        layout="total, prev, pager, next, jumper"
-        :total="innerData.questionnaireList.length"
-      />
-    </div>
-    <QuestionnaireDesigner
-      v-model="innerData.questionnaireList[innerData.active]"
-      class="preview"
-      preview
+    <OperateBar
+      @reload="$emit('reload')"
+      @query="$emit('query', $event)"
+    />
+    <ListQuestionnaire
+      :data="data"
+      @create="$emit('create')"
+      @edit="$emit('edit', $event)"
+      @remove="$emit('remove', $event)"
+      @view="$emit('view', $event)"
+    />
+    <el-pagination
+      v-model:currentPage="innerData.innerCurrentPage"
+      class="manager-pagination"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
+      :total="data?.length"
     />
     <DialogQuestionnaireDesigner
       v-model="innerData.questionnaire"
       v-model:show="innerData.show"
-      :questionnaire-type="questionnaireType"
       @close="close"
       @save="save"
     />
@@ -35,13 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
-import { cloneDeep } from 'lodash-es'
 import { PropType, reactive, watch } from 'vue'
 import ListQuestionnaire from './components/ListQuestionnaire/ListQuestionnaire.vue'
 import OperateBar from './components/OperateBar/OperateBar.vue'
 import DialogQuestionnaireDesigner from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
-import QuestionnaireDesigner from './components/QuestionnaireDesigner/QuestionnaireDesigner.vue'
 const props = defineProps({
   /**
    * 问卷数据
@@ -51,11 +41,25 @@ const props = defineProps({
     default: undefined
   },
   /**
+   * 问卷
+   */
+  questionnaire: {
+    type: Object as PropType<Questionnaire>,
+    default: undefined
+  },
+  /**
    * 保存问卷的方法
    */
   saveFunc: {
     type: Function as PropType<(data: Questionnaire) => void>,
-    default: null
+    default: undefined
+  },
+  /**
+   * 编辑弹窗显隐控制
+   */
+  showDialog: {
+    type: Boolean,
+    default: false
   },
   /**
    * 当前页
@@ -63,13 +67,6 @@ const props = defineProps({
   currentPage: {
     type: Number,
     default: 1
-  },
-  /**
-   * 问卷类型数组
-   */
-  questionnaireType: {
-    type: Array as PropType<questionnaireType[]>,
-    default: []
   },
   /**
    * 页数
@@ -81,23 +78,19 @@ const props = defineProps({
 })
 
 const innerData: QuestionnaireManagerData = reactive({
-  active: 0,
   innerCurrentPage: 1,
   show: false,
-  questionnaireList: [],
   questionnaire: undefined
 })
 
-const emit = defineEmits(['update:currentPage', 'reload', 'query'])
+const emit = defineEmits(['update:currentPage', 'update:showDialog', 'reload', 'query', 'edit', 'create', 'remove', 'view'])
 
 watch(
-  [() => props.data, () => props.currentPage],
-  ([data, currentPage]) => {
-    if (data) {
-      innerData.questionnaireList = data
-      innerData.questionnaire = cloneDeep(innerData.questionnaireList[0])
-    }
+  [() => props.questionnaire, () => props.showDialog, () => props.currentPage],
+  ([questionnaire, showDialog, currentPage]) => {
+    innerData.questionnaire = questionnaire
     innerData.innerCurrentPage = currentPage
+    innerData.show = showDialog
   },
   { immediate: true, deep: true }
 )
@@ -108,43 +101,16 @@ watch(() => innerData.innerCurrentPage,
   }
 )
 
-/**
- * 编辑按钮点击事件
- */
-function edit(index: number) {
-  innerData.active = index
-  innerData.questionnaire = cloneDeep(innerData.questionnaireList[index])
-  innerData.show = true
-}
-/**
- * 重置组件数据
- */
-function reborn() {
-  innerData.questionnaire = {
-    id: undefined,
-    title: undefined,
-    details: undefined,
-    totalScore: undefined,
-    isEnable: QuestionnaireStatus.ALIVE, // 默认启用
-    createDate: undefined,
-    lastUpdateUserName: undefined,
-    lastUpdateDate: undefined,
-    type: undefined,
-    subjectList: []
+watch(() => innerData.show,
+  (newValue) => {
+    emit('update:showDialog', newValue)
   }
-}
-/**
- * 创建空问卷
- */
-function createQuestionnaire() {
-  reborn()
-  innerData.show = true
-}
+)
 /**
  * 保存按钮点击
  */
 function save() {
-  if(innerData.questionnaire){
+  if (props.saveFunc && innerData.questionnaire) {
     props.saveFunc(innerData.questionnaire)
   }
   innerData.show = false
@@ -154,31 +120,29 @@ function save() {
  */
 function close() {
   innerData.show = false
-  innerData.active = 0
   emit('reload')
+}
+/**
+ * 返回一个被删除特定属性的实体
+ * @param source 源目标
+ * @param prop 属性
+ */
+function removeProperties<T>(source: object, prop: string): T {
+  const sourceList = Object.entries(source)
+  return Object.fromEntries(sourceList.map((item: [string, any], index: number) => {
+    return item[0] === prop ? sourceList[index - 1] ?? sourceList[index + 1] : item
+  })) as T
 }
 </script>
 
 <style lang="scss" scoped>
 .manager-container {
-  display: flex;
   margin-top: 10px;
   background: white;
-
-  .left {
-    position: relative;
-    display: flex;
-    flex: 2;
-    flex-direction: column;
-  }
-
-  .preview {
-    flex: 1;
-  }
 }
 
 .manager-pagination {
-  align-self: flex-end;
+  float: right;
   margin: 10px;
 }
 </style>

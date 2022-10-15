@@ -1,13 +1,15 @@
 <template>
   <div class="container">
     <QuestionnaireManager
-      :data="q.data"
+      :data="data"
+      :questionnaire="q"
       v-model:current-page="current"
+      v-model:show-dialog="show"
       class="manager"
-      :questionnaire-type="questionnaireType.data"
       :save-func="something"
       @reload="reload"
       @query="query"
+      @create="show = true"
     />
   </div>
 </template>
@@ -15,15 +17,24 @@
 <script setup lang="ts" name="V1Test">
 import { reactive, ref, toRefs, watch } from 'vue'
 import QuestionnaireManager from '../../../components/QuestionnaireManager/QuestionnaireManager.vue'
+import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity';
 
-let questionnaireType = reactive({data:[{label:'流调表',value:'ldb'},{label:'问卷',value:'wj'}] as questionnaireType[]})
-
-let active = ref(0)
+let show = ref(false)
 let current = ref(1)
 
-let q = reactive({
-  data: []
-})
+let data = ref<Questionnaire[]>([])
+let q = ref<Questionnaire | undefined>({
+    id: undefined,
+    title: undefined,
+    details: undefined,
+    totalScore: undefined,
+    isEnable: QuestionnaireStatus.ALIVE, // 默认启用
+    createDate: undefined,
+    lastUpdateUserName: undefined,
+    lastUpdateDate: undefined,
+    type: undefined,
+    subjectList: []
+  })
 
 
 

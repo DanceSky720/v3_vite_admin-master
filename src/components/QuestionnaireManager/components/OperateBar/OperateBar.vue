@@ -1,40 +1,50 @@
 <template>
   <div class="bar-container">
-    <el-input
-      v-model="data"
-      clearable
-      placeholder="输入关键字"
-      class="bar-input"
-    >
-      <template #append>
-        <el-button
-          :icon="Search"
-          type="primary"
-          @click="$emit('query', data)"
+    <el-form inline>
+      <el-form-item
+        class="bar-container_mg-0"
+        label="问卷名称"
+      >
+        <el-input
+          v-model="data"
+          clearable
+          placeholder="输入关键字"
+          class="bar-input"
         />
-      </template>
-    </el-input>
-    <div class="right">
-      <el-button
-        :icon="Refresh"
-        @click="$emit('reload')"
+      </el-form-item>
+      <el-form-item
+        class="bar-container_mg-0"
+        label="创建人"
       >
-        刷新
-      </el-button>
-      <el-button
-        :icon="Plus"
-        type="primary"
-        plain
-        @click="$emit('create')"
-      >
-        创建问卷
-      </el-button>
-    </div>
+        <el-input
+          v-model="data"
+          clearable
+          placeholder="创建人"
+          class="bar-input"
+        />
+      </el-form-item>
+    </el-form>
+
+    <el-button
+      class="bar-container_btn"
+      :icon="Refresh"
+      @click="$emit('reload')"
+    >
+      重置
+    </el-button>
+    <el-button
+      class="bar-container_btn"
+      :icon="Refresh"
+      type="primary"
+      @click="$emit('query')"
+    >
+      搜索
+    </el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Refresh } from '@element-plus/icons-vue'
+import { Refresh } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 /**
@@ -42,7 +52,7 @@ import { ref } from 'vue'
  */
 const data = ref('')
 
-defineEmits(['reload', 'create', 'query'])
+defineEmits(['reload', 'query'])
 </script>
 
 <style lang="scss" scoped>
@@ -52,21 +62,19 @@ defineEmits(['reload', 'create', 'query'])
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 60px;
+  height: 70px;
   padding: 10px;
   margin: 10px;
   background: #fff;
   border-radius: $q-border-radius-small;
   box-shadow: $q-box-shadow-normal;
-}
 
-.bar-input {
-  width: 350px;
-}
+  &_mg-0 {
+    margin: 0 10px;
+  }
 
-.right {
-  align-items: center;
-  justify-content: center;
+  &_btn {
+    margin: 0 10px;
+  }
 }
 </style>

@@ -5,7 +5,7 @@ type DialogQuestionnaireDesignerData = {
   /**
    * 问卷
    */
-  questionnaire: questionnaire | undefined
+  questionnaire: QuestionnaireEditorialVersion | undefined
   /**
    * 显隐控制
    */

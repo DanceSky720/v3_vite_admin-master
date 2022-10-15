@@ -7,17 +7,9 @@ type QuestionnaireManagerData = {
    */
   show: boolean
   /**
-   * 激活的下标
-   */
-  active: number
-  /**
    * 当前页
    */
   innerCurrentPage: number
-  /**
-   * 问卷列表
-   */
-  questionnaireList: Questionnaire[]
   /**
    * 问卷
    */

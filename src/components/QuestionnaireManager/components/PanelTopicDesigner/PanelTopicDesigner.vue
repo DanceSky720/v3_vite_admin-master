@@ -5,23 +5,34 @@
         题目属性
       </p>
       <div class="edit-area">
-        <template v-if="questionnaireSubject.data">
+        <template v-if="questionnaireSubject">
           <el-form>
             <el-form-item
               label="题目"
               size="large"
             >
               <el-input
-                v-model="questionnaireSubject.data.title"
+                v-model="questionnaireSubject.title"
                 size="large"
                 placeholder="为题目添加标题"
+              />
+            </el-form-item>
+
+            <el-form-item
+              label="必填"
+              size="large"
+            >
+              <el-switch
+                size="large"
+                active-text="是"
+                inactive-text="否"
               />
             </el-form-item>
           </el-form>
           <el-divider> <h2>选项</h2> </el-divider>
           <el-button
             v-if="selective"
-            class="add-btn"
+            class="edit-area-add-btn"
             type="primary"
             :disabled="!allow"
             :icon="Plus"
@@ -38,63 +49,47 @@
             class="transition-group"
           >
             <div
-              v-for="(option, index) in questionnaireSubject?.data?.options"
+              v-for="(option, index) in questionnaireSubject?.options"
               :key="option.id ?? option.title"
               draggable="true"
-              class="options"
+              class="transition-group-options"
               :class="data.dancing ? 'event-done' : ''"
               @dragenter="dragenter($event, index)"
               @dragover="$event.preventDefault()"
               @dragstart="dragstart(index)"
               @dragend="data.dancing = false"
             >
-              <el-divider content-position="left">
-                <h3>选项{{ index + 1 }}</h3>
-              </el-divider>
-              <el-form-item class="action-right">
-                <el-button
-                  :icon="Rank"
-                  circle
-                  plain
-                />
-                <el-button
-                  :icon="ArrowUpBold"
-                  circle
-                  plain
-                  @click="upwards(index)"
-                />
-                <el-button
-                  :icon="ArrowDownBold"
-                  circle
-                  plain
-                  @click="downward(index)"
-                />
-                <el-button
-                  type="danger"
-                  :icon="Delete"
-                  circle
-                  plain
-                  @click="remove(index)"
-                />
-              </el-form-item>
-              <el-form-item label="标题">
-                <el-input
-                  v-model="option.title"
-                  placeholder="为题目添加标题"
-                />
-              </el-form-item>
-              <el-form-item label="分数">
-                <el-input
-                  v-model="option.fraction"
-                  type="number"
-                  placeholder="请输入分数"
-                />
-              </el-form-item>
-              <el-form-item label="说明">
-                <el-input
-                  v-model="option.explain"
-                  placeholder="请输入说明"
-                />
+              <el-form-item>
+                <div class="option-line">
+                  <el-button
+                    :icon="Rank"
+                    circle
+                    plain
+                  />
+                  <el-button
+                    type="danger"
+                    :icon="Close"
+                    circle
+                    plain
+                    @click="remove(index)"
+                  />
+                  <el-input
+                    v-model="option.title"
+                    class="mg-0-10"
+                    placeholder="为题目添加标题"
+                  />
+                  <el-checkbox
+                    v-if="QuestionnaireSupportType.CHECKBOX === questionnaireSubject?.type"
+                    class="mg-0-10"
+                    label="默认"
+                    size="large"
+                  />
+                  <el-radio
+                    v-if="QuestionnaireSupportType.RADIO === questionnaireSubject?.type"
+                    label="默认"
+                    size="large"
+                  />
+                </div>
               </el-form-item>
             </div>
           </TransitionGroup>
@@ -109,12 +104,11 @@
 </template>
 
 <script setup lang="ts">
+import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
 import {
-  ArrowDownBold,
-  ArrowUpBold,
-  Delete,
   Plus,
-  Rank
+  Rank,
+  Close
 } from '@element-plus/icons-vue'
 import { PropType, reactive, watch } from 'vue'
 import useTopicDesigner from '../../hooks/useTopicDesigner'
@@ -137,8 +131,6 @@ const data: PanelTopicDesignerData = reactive({
 
 const {
   questionnaireSubject,
-  upwards,
-  downward,
   addOption,
   remove,
   selective,
@@ -149,15 +141,15 @@ const {
 
 const emit = defineEmits(['update:modelValue'])
 
-watch(() => props.modelValue,(mv) => {
-    if (mv) {
-      questionnaireSubject.data = mv
-    }
-  },
-  { immediate: true }
+watch(() => props.modelValue, (mv) => {
+  if (mv) {
+    questionnaireSubject.value = mv
+  }
+},
+{ immediate: true }
 )
 
-watch(() => questionnaireSubject.data,
+watch(() => questionnaireSubject.value,
   (newValue) => {
     emit('update:modelValue', newValue)
   }
@@ -173,11 +165,11 @@ function dragenter(event: DragEvent, index: number) {
   if (data.dancer === index) {
     return
   }
-  if (!questionnaireSubject.data) {
+  if (!questionnaireSubject.value) {
     return
   }
-  questionnaireSubject.data.options = util.swapPlaces(
-    questionnaireSubject.data.options,
+  questionnaireSubject.value.options = util.swapPlaces(
+    questionnaireSubject.value.options,
     index,
     data.dancer
   )
@@ -197,9 +189,10 @@ function dragstart(index: number) {
 @import '../../style';
 
 .edit-container {
-  min-width: 280px;
+  min-width: 380px;
+  max-width: 460px;
   padding: 4px 20px;
-  margin: 20px 0;
+  margin: 10px;
   overflow-x: hidden;
   pointer-events: all;
   border-radius: $q-border-radius-normal;
@@ -226,18 +219,26 @@ function dragstart(index: number) {
 }
 
 .action-right {
+  align-self: flex-start;
+}
+
+.edit-area-add-btn {
   align-self: flex-end;
+  margin: 6px 0 14px;
 }
 
-.add-btn {
-  margin: 10px 0;
-}
-
-.options {
+.transition-group-options {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 44px;
+}
+
+.option-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .event-done {
@@ -262,5 +263,9 @@ function dragstart(index: number) {
     content: '没有选中的组件';
     transform: translate(-50%, -50%);
   }
+}
+
+.mg-0-10 {
+  margin: 0 10px;
 }
 </style>
