@@ -9,7 +9,7 @@
           type="danger"
           :disabled="allow"
           plain
-          @click="$emit('remove')"
+          @click="$emit('batch-deletion', ids)"
         >
           批量删除
         </el-button>
@@ -60,17 +60,6 @@
         align="center"
       />
       <el-table-column
-        label="状态"
-        prop="isEnable"
-        align="center"
-      >
-        <template #default="{ row }">
-          <span :style="enableCell(row.isEnable).color">
-            {{ enableCell(row.isEnable).text }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
         label="操作"
         align="center"
         width="250"
@@ -102,7 +91,6 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionnaireStatus } from '@/entity/enum/QuestionnaireStatus.entity'
 import { Edit, Search, Delete, Plus } from '@element-plus/icons-vue'
 import { computed, PropType, ref } from 'vue'
 defineProps({
@@ -115,37 +103,32 @@ defineProps({
   }
 })
 
+/**
+ * 选中的列表
+ */
 const selected = ref<Questionnaire[]>()
 
 /**
  * 是否允许点击批量删除
  */
-const allow = computed(()=>{
-  if(selected.value){
+const allow = computed(() => {
+  if (selected.value) {
     return selected.value.length < 1
   }
   return true
 })
-
 /**
- * 状态样式
- * @param isEnable 是否启用
+ * 选中要删除的问卷的id集合
  */
-const enableCell = (isEnable: number) => {
-  return {
-    color: {
-      color: isEnable === QuestionnaireStatus.ALIVE ? '#67C23A' : '#F56C6C'
-    },
-    text: isEnable === QuestionnaireStatus.ALIVE ? '启用' : '停用'
+const ids = computed(() => {
+  if (selected.value) {
+    return selected?.value?.map((q: Questionnaire) => q.id)
   }
-}
+  return null
+})
 
-defineEmits(['edit', 'view', 'remove', 'create'])
+defineEmits(['edit', 'view', 'remove', 'create', 'batch-deletion'])
 
-function change(selection){
-console.log(selection);
-
-}
 </script>
 
 <style lang="scss" scoped>
@@ -166,7 +149,7 @@ console.log(selection);
     justify-content: space-between;
     width: 100%;
     padding: 20px;
-    color: rgb(49, 49, 49);
+    color: #313131;
   }
 }
 

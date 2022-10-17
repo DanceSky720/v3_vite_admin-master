@@ -10,6 +10,7 @@
       @edit="$emit('edit', $event)"
       @remove="$emit('remove', $event)"
       @view="$emit('view', $event)"
+      @batch-deletion="$emit('batch-deletion', $event)"
     />
     <el-pagination
       v-model:currentPage="innerData.innerCurrentPage"
@@ -32,6 +33,7 @@ import { PropType, reactive, watch } from 'vue'
 import ListQuestionnaire from './components/ListQuestionnaire/ListQuestionnaire.vue'
 import OperateBar from './components/OperateBar/OperateBar.vue'
 import DialogQuestionnaireDesigner from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
+
 const props = defineProps({
   /**
    * 问卷数据
@@ -83,7 +85,7 @@ const innerData: QuestionnaireManagerData = reactive({
   questionnaire: undefined
 })
 
-const emit = defineEmits(['update:currentPage', 'update:showDialog', 'reload', 'query', 'edit', 'create', 'remove', 'view'])
+const emit = defineEmits(['update:currentPage', 'update:showDialog', 'reload', 'query', 'edit', 'create', 'remove', 'view', 'batch-deletion'])
 
 watch(
   [() => props.questionnaire, () => props.showDialog, () => props.currentPage],
@@ -106,6 +108,7 @@ watch(() => innerData.show,
     emit('update:showDialog', newValue)
   }
 )
+
 /**
  * 保存按钮点击
  */
@@ -115,6 +118,7 @@ function save() {
   }
   innerData.show = false
 }
+
 /**
  * 编辑弹窗关闭
  */
@@ -122,6 +126,7 @@ function close() {
   innerData.show = false
   emit('reload')
 }
+
 /**
  * 返回一个被删除特定属性的实体
  * @param source 源目标

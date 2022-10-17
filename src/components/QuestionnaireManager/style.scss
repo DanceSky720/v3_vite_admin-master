@@ -20,7 +20,7 @@ $q-transition-speed1: all .8s;
 .bounce-enter-from,
 .bounce-leave-to {
     opacity: 0;
-    transform: scaleY(0.01) translateX(40%);
+    transform: scaleY(0.01) translateX(10%);
 }
 
 .bounce-leave-active {

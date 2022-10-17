@@ -3,45 +3,54 @@ import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType
 import util from '../util'
 
 function useQuestionnaireDesigner() {
-  const questionnaire = ref<QuestionnaireEditorialVersion | undefined | null>()
+  const questionnaire = ref<QuestionnaireEditorialVersion | undefined>()
   /**
    * 上移题目
    * @param index 要下移的元素下标
    */
   const upwards = (index: number) => {
-    questionnaire.value.subjectList = util.upwards<QuestionnaireSubjectEditorialVersion>(
-      questionnaire.value.subjectList,
-      index
-    )
+    if (questionnaire.value) {
+      questionnaire.value.subjectList = util.upwards<QuestionnaireSubjectEditorialVersion>(
+        questionnaire.value.subjectList,
+        index
+      )
+    }
   }
   /**
    * 下移题目
    * @param index 要下移的元素下标
    */
   function downward(index: number) {
-    questionnaire.value.subjectList = util.downward<QuestionnaireSubjectEditorialVersion>(
-      questionnaire.value.subjectList,
-      index
-    )
+    if (questionnaire.value) {
+      questionnaire.value.subjectList = util.downward<QuestionnaireSubjectEditorialVersion>(
+        questionnaire?.value?.subjectList,
+        index
+      )
+    }
   }
   /**
    * 移除题目
    * @param index 要移除的元素下标
    */
   function remove(index: number) {
-    questionnaire.value.subjectList = util.remove(questionnaire.value.subjectList, index)
+    if (questionnaire.value) {
+      questionnaire.value.subjectList = util.remove<QuestionnaireSubjectEditorialVersion>(questionnaire.value.subjectList, index)
+    }
   }
   /**
    * 是否允许点击保存按钮
    */
-  const allow = computed(() => { 
-    const checkArray = [
-      hasUniqueTitle(questionnaire.value.subjectList),
-      emptyTitle(questionnaire.value.subjectList),
-      questionnaire.value.subjectList.length > 0,
-      questionnaire.value.title ? questionnaire.value.title.length > 0 : false
-    ]
-    return checkArray.every(Boolean)
+  const allow = computed(() => {
+    if (questionnaire.value) {
+      const checkArray = [
+        hasUniqueTitle(questionnaire.value.subjectList),
+        emptyTitle(questionnaire.value.subjectList),
+        questionnaire.value.subjectList.length > 0,
+        questionnaire.value.title ? questionnaire.value.title.length > 0 : false
+      ]
+      return checkArray.every(Boolean)
+    }
+    return false
   })
   /**
    * 获取题目类型的翻译
@@ -55,7 +64,7 @@ function useQuestionnaireDesigner() {
       return '单选题'
     }
     if (type === QuestionnaireSupportType.INPUT) {
-      return '主观题'
+      return '填空题'
     }
     return '未定义'
   }

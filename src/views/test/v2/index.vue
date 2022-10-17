@@ -51,9 +51,8 @@ function reload() {
   console.log(text);
 }
 
-function something(data: Questionnaire){
+function something(data: string[]){
  console.log(data);
- this.data.push(data)
   
 }
 </script>

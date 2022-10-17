@@ -2,19 +2,13 @@
   <div class="questionnaire-designer-container">
     <div v-if="questionnaire">
       <div class="questionnaire-title">
-        <el-input
-          v-if="!preview"
-          v-model="questionnaire.title"
-          :disabled="preview"
-          class="title-input"
-          show-word-limit
-          placeholder="请输入问卷名"
-          size="large"
-        />
-        <p v-else>
+        <p v-if="preview">
           {{ questionnaire.title }}
         </p>
       </div>
+      <p class="topic-title-left-border">
+        题目
+      </p>
       <div
         v-if="!preview"
         class="btn-group"
@@ -37,7 +31,7 @@
         >
           取消
         </el-button>
-               <el-button
+        <el-button
           class="btn"
           :icon="Pear"
           plain
@@ -198,10 +192,10 @@ function shadow(subject: QuestionnaireSubject) {
 @import "../../style";
 
 .questionnaire-designer-container {
-  width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  width: 100%;
   padding: 20px;
   margin: 20px;
   overflow-y: auto;
@@ -219,7 +213,7 @@ function shadow(subject: QuestionnaireSubject) {
   position: relative;
   min-height: 200px;
   padding-top: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
   overflow-x: hidden;
   border: 1px dashed #969696;
   border-radius: $q-border-radius-normal;
@@ -250,14 +244,6 @@ function shadow(subject: QuestionnaireSubject) {
   font-size: 30px;
   font-weight: bold;
   text-align: center;
-}
-
-.title-input {
-  margin-bottom: 20px;
-}
-
-.label-item {
-  margin: 0 12px 0 0;
 }
 
 .questionnaire-details {
@@ -305,7 +291,16 @@ function shadow(subject: QuestionnaireSubject) {
 .btn-group {
   display: flex;
   flex-direction: row-reverse;
-  padding: 0 20px;
+  padding: 10px 0;
+}
+
+.topic-title-left-border {
+  height: 32px;
+  padding: 10px;
+  line-height: 32px;
+  font-size: 22px;
+  background-color: #ededed;
+  border-left: 10px solid #0486fe;
 }
 
 .questionnaire-designer-empty-view {

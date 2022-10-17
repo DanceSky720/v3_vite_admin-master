@@ -1,8 +1,5 @@
 <template>
   <div class="selector-container">
-    <p class="components-title">
-      添加题目
-    </p>
     <TransitionGroup
       name="slide"
       tag="div"
@@ -97,6 +94,7 @@ function submit(index: number, submit: boolean) {
 .selector-transition-group {
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: all;
   flex-wrap: wrap;
 }

@@ -260,7 +260,7 @@ function dragstart(index: number) {
     width: 100%;
     font-size: 22px;
     text-align: center;
-    content: '没有选中的组件';
+    content: '无数据';
     transform: translate(-50%, -50%);
   }
 }

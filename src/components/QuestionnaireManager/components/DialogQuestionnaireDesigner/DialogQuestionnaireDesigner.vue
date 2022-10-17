@@ -5,6 +5,17 @@
     width="80%"
     :before-close="handleClose"
   >
+    <el-form v-if="data.questionnaire">
+      <el-form-item label="问卷名">
+        <el-input
+          v-model="data.questionnaire.title"
+          class="title-input"
+          show-word-limit
+          placeholder="请输入问卷名"
+          size="large"
+        />
+      </el-form-item>
+    </el-form>
     <div
       v-if="data.questionnaire"
       class="dialog-container"
@@ -84,9 +95,7 @@ watch(() => data.questionnaire, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
-watch(
-  () => data.open,
-  (newValue) => {
+watch(() => data.open, (newValue) => {
     emit('update:show', newValue)
   }
 )
@@ -111,7 +120,7 @@ function addSubject(type: QuestionnaireSupportType) {
   data.currentIndex = data.questionnaire.subjectList.length - 1
 }
 /**
- * 拖拽离开该组件时,移除题目事件
+ * 拖拽离开该组件时,移除题目
  */
 function dragleave() {
   if (!(data.dancer.length > 0)) {
@@ -123,7 +132,7 @@ function dragleave() {
 }
 
 /**
- * 重置组件数据
+ * 重置问卷数据
  */
 function reborn() {
   data.questionnaire = {
@@ -167,7 +176,7 @@ async function handleClose() {
   display: flex;
   transition: all 1s;
 
-    &-left {
+  &-left {
     display: flex;
     flex-direction: column;
 
