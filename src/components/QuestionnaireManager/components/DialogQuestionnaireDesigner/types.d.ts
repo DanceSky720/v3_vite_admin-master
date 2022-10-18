@@ -3,10 +3,6 @@
  */
 type DialogQuestionnaireDesignerData = {
   /**
-   * 问卷
-   */
-  questionnaire: QuestionnaireEditorialVersion | undefined
-  /**
    * 显隐控制
    */
   open: boolean

@@ -37,7 +37,7 @@
             :disabled="!allow"
             :icon="Plus"
             plain
-            @click="addOption"
+            @click="$emit('add-option')"
           >
             添加新选项
           </el-button>
@@ -50,11 +50,11 @@
           >
             <div
               v-for="(option, index) in questionnaireSubject?.options"
-              :key="option.id ?? option.title"
+              :key="option.id"
               draggable="true"
               class="transition-group-options"
               :class="data.dancing ? 'event-done' : ''"
-              @dragenter="dragenter($event, index)"
+              @dragenter="dragenter(index)"
               @dragover="$event.preventDefault()"
               @dragstart="dragstart(index)"
               @dragend="data.dancing = false"
@@ -112,7 +112,6 @@ import {
 } from '@element-plus/icons-vue'
 import { PropType, reactive, watch } from 'vue'
 import useTopicDesigner from '../../hooks/useTopicDesigner'
-import util from '../../util'
 
 const props = defineProps({
   /**
@@ -131,22 +130,22 @@ const data: PanelTopicDesignerData = reactive({
 
 const {
   questionnaireSubject,
-  addOption,
   remove,
   selective,
-  allow
+  allow,
+  exchangeValue
 } = useTopicDesigner()
 
 // TODO 为没有唯一值的options寻找唯一值
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'add-option'])
 
 watch(() => props.modelValue, (mv) => {
-  if (mv) {
-    questionnaireSubject.value = mv
+  if (!mv) {
+    return
   }
-},
-{ immediate: true }
+  questionnaireSubject.value = mv
+}, { immediate: true }
 )
 
 watch(() => questionnaireSubject.value,
@@ -157,22 +156,10 @@ watch(() => questionnaireSubject.value,
 
 /**
  * 拖拽进入时,交换值
- * @param event 拖拽事件
  * @param index 交换的元素下标
  */
-function dragenter(event: DragEvent, index: number) {
-  event.preventDefault()
-  if (data.dancer === index) {
-    return
-  }
-  if (!questionnaireSubject.value) {
-    return
-  }
-  questionnaireSubject.value.options = util.swapPlaces(
-    questionnaireSubject.value.options,
-    index,
-    data.dancer
-  )
+function dragenter(index: number) {
+  exchangeValue(index, data.dancer)
   data.dancer = index
 }
 /**
@@ -260,7 +247,7 @@ function dragstart(index: number) {
     width: 100%;
     font-size: 22px;
     text-align: center;
-    content: '无数据';
+    content: "无数据";
     transform: translate(-50%, -50%);
   }
 }

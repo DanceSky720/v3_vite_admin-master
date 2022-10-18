@@ -3,17 +3,25 @@ import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType
 import util from '../util'
 
 function useQuestionnaireDesigner() {
-  const questionnaire = ref<QuestionnaireEditorialVersion | undefined>()
+  /**
+   * 问卷
+   */
+  const questionnaire = ref<Questionnaire | undefined>()
+  const types = new Map<QuestionnaireSupportType, string>()
+  types.set(QuestionnaireSupportType.CHECKBOX, '多选题')
+  types.set(QuestionnaireSupportType.RADIO, '单选题')
+  types.set(QuestionnaireSupportType.INPUT, '填空题')
   /**
    * 上移题目
    * @param index 要下移的元素下标
    */
   const upwards = (index: number) => {
     if (questionnaire.value) {
-      questionnaire.value.subjectList = util.upwards<QuestionnaireSubjectEditorialVersion>(
-        questionnaire.value.subjectList,
-        index
-      )
+      questionnaire.value.subjectList =
+        util.upwards<QuestionnaireSubject>(
+          questionnaire.value.subjectList,
+          index
+        )
     }
   }
   /**
@@ -22,10 +30,11 @@ function useQuestionnaireDesigner() {
    */
   function downward(index: number) {
     if (questionnaire.value) {
-      questionnaire.value.subjectList = util.downward<QuestionnaireSubjectEditorialVersion>(
-        questionnaire?.value?.subjectList,
-        index
-      )
+      questionnaire.value.subjectList =
+        util.downward<QuestionnaireSubject>(
+          questionnaire?.value?.subjectList,
+          index
+        )
     }
   }
   /**
@@ -34,7 +43,11 @@ function useQuestionnaireDesigner() {
    */
   function remove(index: number) {
     if (questionnaire.value) {
-      questionnaire.value.subjectList = util.remove<QuestionnaireSubjectEditorialVersion>(questionnaire.value.subjectList, index)
+      questionnaire.value.subjectList =
+        util.remove<QuestionnaireSubject>(
+          questionnaire.value.subjectList,
+          index
+        )
     }
   }
   /**
@@ -46,7 +59,9 @@ function useQuestionnaireDesigner() {
         hasUniqueTitle(questionnaire.value.subjectList),
         emptyTitle(questionnaire.value.subjectList),
         questionnaire.value.subjectList.length > 0,
-        questionnaire.value.title ? questionnaire.value.title.length > 0 : false
+        questionnaire.value.title
+          ? questionnaire.value.title.length > 0
+          : false,
       ]
       return checkArray.every(Boolean)
     }
@@ -56,34 +71,30 @@ function useQuestionnaireDesigner() {
    * 获取题目类型的翻译
    * @param type 题目类型
    */
-  function subjectType(type: string | undefined) {
-    if (type === QuestionnaireSupportType.CHECKBOX) {
-      return '多选题'
-    }
-    if (type === QuestionnaireSupportType.RADIO) {
-      return '单选题'
-    }
-    if (type === QuestionnaireSupportType.INPUT) {
-      return '填空题'
-    }
-    return '未定义'
+  function subjectType(type: QuestionnaireSupportType) {
+    return types.get(type)
   }
   /**
    * 是否拥有相同的标题
    * @param list 要检查的数组
    */
-  function hasUniqueTitle(list: QuestionnaireSubjectEditorialVersion[]) {
+  function hasUniqueTitle(list: QuestionnaireSubject[]) {
     return (
-      new Set(list.map((subject: QuestionnaireSubjectEditorialVersion) => subject?.title))
-        .size === list.length
+      new Set(
+        list.map(
+          (subject: QuestionnaireSubject) => subject?.title
+        )
+      ).size === list.length
     )
   }
   /**
    * 是否有空标题
    * @param list 要检查的数组
    */
-  function emptyTitle(list: QuestionnaireSubjectEditorialVersion[]) {
-    return list.every((subject: QuestionnaireSubjectEditorialVersion) => subject?.title?.length)
+  function emptyTitle(list: QuestionnaireSubject[]) {
+    return list.every(
+      (subject: QuestionnaireSubject) => subject?.title?.length
+    )
   }
 
   return {
@@ -92,7 +103,7 @@ function useQuestionnaireDesigner() {
     downward,
     remove,
     allow,
-    subjectType
+    subjectType,
   }
 }
 

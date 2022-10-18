@@ -24,17 +24,24 @@ let current = ref(1)
 
 let data = ref<Questionnaire[]>([])
 let q = ref<Questionnaire | undefined>({
-    id: undefined,
-    title: undefined,
-    details: undefined,
-    totalScore: undefined,
-    isEnable: QuestionnaireStatus.ALIVE, // 默认启用
-    createDate: undefined,
-    lastUpdateUserName: undefined,
-    lastUpdateDate: undefined,
-    type: undefined,
-    subjectList: []
-  })
+  id: '',
+  /**
+   * 标题
+   */
+  title: '',
+  /**
+   * 详情
+   */
+  details: '',
+  /**
+   * 问卷类型
+   */
+  type: '',
+  /**
+   * 项目列表
+   */
+  subjectList: []
+})
 
 
 
@@ -51,7 +58,7 @@ function reload() {
   console.log(text);
 }
 
-function something(data: string[]){
+function something(data: Questionnaire){
  console.log(data);
   
 }

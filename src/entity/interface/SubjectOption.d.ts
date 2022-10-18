@@ -5,21 +5,21 @@ declare interface SubjectOption {
   /**
    * id
    */
-   id?: string | undefined
+  id?: string | undefined
+  /**
+   * 题目id
+   */
+  subjectId: string
   /**
    * 选项名称
    */
-  title: string | undefined
+  title: string
   /**
    * 选项序号
    */
-  serialNumber: string | undefined
+  sort: number
   /**
    * 说明
    */
-  explain: string | undefined
-  /**
-   * 分数
-   */
-  fraction: number | undefined
+  description?: string | undefined
 }

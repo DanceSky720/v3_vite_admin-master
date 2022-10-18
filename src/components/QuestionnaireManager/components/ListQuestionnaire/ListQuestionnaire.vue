@@ -50,13 +50,8 @@
         align="center"
       />
       <el-table-column
-        label="创建日期"
-        prop="createDate"
-        align="center"
-      />
-      <el-table-column
-        label="更新日期"
-        prop="lastUpdateDate"
+        label="说明"
+        prop="details"
         align="center"
       />
       <el-table-column

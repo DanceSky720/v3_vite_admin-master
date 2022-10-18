@@ -1,9 +1,6 @@
 <template>
   <div class="manager-container">
-    <OperateBar
-      @reload="$emit('reload')"
-      @query="$emit('query', $event)"
-    />
+    <OperateBar @reload="$emit('reload')" @query="$emit('query', $event)" />
     <ListQuestionnaire
       :data="data"
       @create="$emit('create')"
@@ -34,58 +31,69 @@ import ListQuestionnaire from './components/ListQuestionnaire/ListQuestionnaire.
 import OperateBar from './components/OperateBar/OperateBar.vue'
 import DialogQuestionnaireDesigner from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
 
+defineExpose({ name: 'QuestionnaireManager' })
 const props = defineProps({
   /**
    * 问卷数据
    */
   data: {
     type: Object as PropType<Questionnaire[]>,
-    default: undefined
+    default: undefined,
   },
   /**
    * 问卷
    */
   questionnaire: {
     type: Object as PropType<Questionnaire>,
-    default: undefined
+    default: undefined,
   },
   /**
    * 保存问卷的方法
    */
   saveFunc: {
     type: Function as PropType<(data: Questionnaire) => void>,
-    default: undefined
+    default: undefined,
   },
   /**
    * 编辑弹窗显隐控制
    */
   showDialog: {
     type: Boolean,
-    default: false
+    default: false,
   },
   /**
    * 当前页
    */
   currentPage: {
     type: Number,
-    default: 1
+    default: 1,
   },
   /**
    * 页数
    */
   pageSize: {
     type: Number,
-    default: 10
-  }
+    default: 10,
+  },
 })
 
 const innerData: QuestionnaireManagerData = reactive({
   innerCurrentPage: 1,
   show: false,
-  questionnaire: undefined
+  questionnaire: undefined,
 })
 
-const emit = defineEmits(['update:currentPage', 'update:showDialog', 'reload', 'query', 'edit', 'create', 'remove', 'view', 'batch-deletion'])
+const emit = defineEmits([
+  'update:currentPage',
+  'update:showDialog',
+  'reload',
+  'query',
+  'edit',
+  'create',
+  'remove',
+  'view',
+  'batch-deletion',
+])
 
 watch(
   [() => props.questionnaire, () => props.showDialog, () => props.currentPage],
@@ -97,13 +105,15 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(() => innerData.innerCurrentPage,
+watch(
+  () => innerData.innerCurrentPage,
   (newValue) => {
     emit('update:currentPage', newValue)
   }
 )
 
-watch(() => innerData.show,
+watch(
+  () => innerData.show,
   (newValue) => {
     emit('update:showDialog', newValue)
   }
@@ -127,16 +137,13 @@ function close() {
   emit('reload')
 }
 
-/**
- * 返回一个被删除特定属性的实体
- * @param source 源目标
- * @param prop 属性
- */
-function removeProperties<T>(source: object, prop: string): T {
-  const sourceList = Object.entries(source)
-  return Object.fromEntries(sourceList.map((item: [string, any], index: number) => {
-    return item[0] === prop ? sourceList[index - 1] ?? sourceList[index + 1] : item
-  })) as T
+function surfaceCopy<T extends object>(source: T | T[]) {
+  const copy = (target: object) => {
+    return Object.fromEntries(Object.entries(source))
+  }
+  return Array.isArray(source)
+    ? source.map((value) => copy(value))
+    : copy(source)
 }
 </script>
 

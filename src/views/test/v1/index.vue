@@ -3,49 +3,52 @@
 </template>
 
 <script setup lang="ts" name="V1Test">
-import { it } from 'element-plus/lib/locale'
-import { reactive, ref, toRefs, watch } from 'vue'
+import { reactive, ref, toRefs, watch } from "vue";
 
-interface Rank {
-  rid?: number
-}
-class Boy {
-  id: number
-  name: string
-}
+// /**
+//  * 判断对象是否为数组
+//  * @param obj
+//  * @returns
+//  */
+// function IsArray(obj: any) {
+//   return obj && typeof obj == "object" && obj instanceof Array;
+// }
 
-class BoyEditableVersion implements Rank {
-  id: number
-  name: string
-  rid: number
-}
-function choice<T>(obj: T, ...props: string[]): T {
-  return props.reduce((result, prop) => {
-    result[prop] = obj[prop]
-    return result
-  }, {} as T)
-}
-const boy: Boy = {
-  id: 1,
-  name: 'xiaoming',
-}
+// /**
+//  * 对象深拷贝
+//  * @param tSource
+//  * @returns
+//  */
+// function deepClone<T>(tSource: T, tTarget?: Record<string, any> | T): T {
+//   if (IsArray(tSource)) {
+//     tTarget = tTarget || [];
+//   } else {
+//     tTarget = tTarget || {};
+//   }
+//   tTarget = IsArray(tSource) ? tTarget || [] : tTarget || {}
+//   for (const key in tSource) {
+//     if (Object.prototype.hasOwnProperty.call(tSource, key)) {
+//       if (typeof tSource[key] === "object" && typeof tSource[key] !== null) {
+//         tTarget[key] = IsArray(tSource[key]) ? [] : {};
+//         deepClone(tSource[key], tTarget[key]);
+//       } else {
+//         tTarget[key] = tSource[key];
+//       }
+//     }
+//   }
+//   return tTarget as T;
+// }
+// const a = {
+//   name: 'ana',
+//   friends:[{name: 'yoy'}]
+// }
 
-const boy1: BoyEditableVersion = { ...boy, rid: 1 }
-const boy2: Boy = choice<Boy>(boy1, 'id', 'name')
-const boy3 = { ...boy1 }
+// const b = deepClone(a)
+// b.friends[0] = {name: 'ays'}
+// b.name = 'bob'
+// console.log(b);
+// console.log(a);
 
-console.log(removeProperties<Boy>(boy1, 'rid'))
-
-function removeProperties<T>(source: object, prop: string): T{
-  let sourceList = Object.entries(source)
-  const entries = sourceList.map((item: [string, any], index: number) => {
-    if (item[0] === prop) {
-      return sourceList[index - 1] ?? sourceList[index + 1]
-    }
-    return item
-  })
-  return Object.fromEntries(entries) as T
-}
 </script>
 
 <style lang="scss" scoped>
@@ -53,6 +56,7 @@ function removeProperties<T>(source: object, prop: string): T{
   height: calc(100vh - 105px - 32px);
   background: white;
 }
+
 .tss {
   width: 100%;
   height: calc(200vh);

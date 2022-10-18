@@ -17,7 +17,7 @@ function swapPlaces<T>(array: T[], wanna: number, wannabe: number): T[] {
   })
 }
 /**
- * 将底部元素置顶
+ * 返回一个将底部元素置顶的数组
  * @param array 要改变的数组
  * @returns 改变过的数组
  */
@@ -27,7 +27,7 @@ function layMeUp<T>(array: T[]): T[] {
   })
 }
 /**
- * 将顶部元素置底
+ * 返回一个将顶部元素置底的数组
  * @param array 要改变的数组
  * @returns 改变过的数组
  */
@@ -62,21 +62,11 @@ function downward<T>(array: T[], wanna: number): T[] {
 /**
  * 返回一个移除指定下标元素的数组
  * @param array 要改变的数组
- * @param index 要交换的元素下标
+ * @param index 要移除的元素下标
  * @returns 改变过的数组
  */
 function remove<T>(array: T[], index: number): T[] {
-  return Array.from(
-    new Set(
-      array.map((item: T, i: number) => {
-          if (i === index) {
-            return array[i - 1] ?? array[i + 1]
-          }
-          return item
-        })
-        .filter((item: T) => item !== undefined && item !== null)
-    )
-  )
+  return [...array.slice(0, index), ...array.slice(index + 1)]
 }
 
 export default {

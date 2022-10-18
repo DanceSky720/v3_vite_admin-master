@@ -3,6 +3,9 @@ import { computed, ref } from 'vue'
 import util from '../util'
 
 function useTopicDesigner() {
+  /**
+   * 问卷选项
+   */
   const questionnaireSubject = ref<QuestionnaireSubject | undefined | null>()
   /**
    * 上移选项
@@ -31,21 +34,6 @@ function useTopicDesigner() {
   }
 
   /**
-   * 添加选项
-   */
-  function addOption() {
-    if (questionnaireSubject.value) {
-      questionnaireSubject.value.options.push({
-        id: new Date().getTime().toString(), // 只在创建时使用
-        title: '',
-        serialNumber: undefined,
-        explain: undefined,
-        fraction: undefined
-      })
-    }
-  }
-
-  /**
    * 移除选项
    * @param index 要移除的元素下标
    */
@@ -56,14 +44,33 @@ function useTopicDesigner() {
   }
 
   /**
+ * 拖拽进入时,交换值
+ * @param index 交换的元素下标
+ * @param index1 交换的元素下标1
+ */
+function exchangeValue(index: number, index1: number) {
+  if (index1 === index) {
+    return
+  }
+  if (!questionnaireSubject.value) {
+    return
+  }
+  questionnaireSubject.value.options = util.swapPlaces(
+    questionnaireSubject.value.options,
+    index,
+    index1
+  )
+}
+
+  /**
    * 是否是选择型
    */
   const selective = computed(() => {
     if (questionnaireSubject.value) {
       return (
-        questionnaireSubject?.value?.type ===
+        questionnaireSubject.value.type ===
           QuestionnaireSupportType.CHECKBOX ||
-        questionnaireSubject?.value?.type === QuestionnaireSupportType.RADIO
+        questionnaireSubject.value.type === QuestionnaireSupportType.RADIO
       )
     }
     return false
@@ -89,8 +96,8 @@ function useTopicDesigner() {
     questionnaireSubject,
     upwards,
     downward,
-    addOption,
     remove,
+    exchangeValue,
     selective,
     allow
   }

@@ -5,10 +5,10 @@
     width="80%"
     :before-close="handleClose"
   >
-    <el-form v-if="data.questionnaire">
+    <el-form v-if="questionnaire">
       <el-form-item label="问卷名">
         <el-input
-          v-model="data.questionnaire.title"
+          v-model="questionnaire.title"
           class="title-input"
           show-word-limit
           placeholder="请输入问卷名"
@@ -17,7 +17,7 @@
       </el-form-item>
     </el-form>
     <div
-      v-if="data.questionnaire"
+      v-if="questionnaire"
       class="dialog-container"
     >
       <div class="dialog-container-left">
@@ -26,12 +26,13 @@
           @chosen="addSubject"
         />
         <PanelTopicDesigner
-          v-model="data.questionnaire.subjectList[data.currentIndex]"
           class="dialog-container-left-designer"
+          v-model="questionnaire.subjectList[data.currentIndex]"
+          @add-option="addOption"
         />
       </div>
       <QuestionnaireDesigner
-        v-model="data.questionnaire"
+        v-model="questionnaire"
         @save="$emit('save')"
         @add-subject="addSubject(data.dancer as QuestionnaireSupportType)"
         @dragleave="dragleave()"
@@ -52,17 +53,16 @@ import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType
 import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
 import TopicSelector from '../TopicSelector/TopicSelector.vue'
-import { PropType, reactive, watch } from 'vue'
+import { PropType, reactive, ref, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import util from '../../util'
-import { QuestionnaireStatus } from '../../../../entity/enum/QuestionnaireStatus.entity'
 
 const props = defineProps({
   /**
    * 问卷
    */
   modelValue: {
-    type: Object as PropType<QuestionnaireEditorialVersion>,
+    type: Object as PropType<Questionnaire>,
     default: undefined
   },
   /**
@@ -75,30 +75,31 @@ const props = defineProps({
 })
 
 const data: DialogQuestionnaireDesignerData = reactive({
-  questionnaire: undefined,
   open: false,
   dancer: '',
   currentIndex: 0
 })
+
+const questionnaire = ref<Questionnaire | undefined>()
+
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
 watch(
   [() => props.modelValue, () => props.show],
-  ([questionnaire, show]) => {
-    data.questionnaire = questionnaire
+  ([mv, show]) => {
+    questionnaire.value = mv
     data.open = show
   },
   { immediate: true, deep: true }
 )
 
-watch(() => data.questionnaire, (newValue) => {
+watch(() => questionnaire.value, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
 watch(() => data.open, (newValue) => {
-    emit('update:show', newValue)
-  }
-)
+  emit('update:show', newValue)
+})
 /**
  * 添加一个问卷项目
  */
@@ -106,18 +107,20 @@ function addSubject(type: QuestionnaireSupportType) {
   if (!type) {
     return
   }
-  if (!data?.questionnaire?.subjectList) {
+  if (!questionnaire.value?.subjectList) {
     return
   }
-  data?.questionnaire?.subjectList.push({
-    id: undefined,
-    title: undefined,
-    serialNumber: undefined,
+  questionnaire.value.subjectList.push({
+    id: new Date().getTime().toString(), // 添加时作为列表的key使用
+    templateId: '',
+    title: '',
+    sort: questionnaire.value.subjectList.length,
     type: type,
     options: [],
-    rid: new Date().getTime()
+    optionIds: [],
+    extend: ''
   })
-  data.currentIndex = data.questionnaire.subjectList.length - 1
+  data.currentIndex = questionnaire.value.subjectList.length - 1
 }
 /**
  * 拖拽离开该组件时,移除题目
@@ -126,25 +129,36 @@ function dragleave() {
   if (!(data.dancer.length > 0)) {
     return
   }
-  if (data.questionnaire) {
-    data.questionnaire.subjectList = util.remove<QuestionnaireSubjectEditorialVersion>(data.questionnaire.subjectList, data.questionnaire.subjectList.length - 1)
+  if (questionnaire.value) {
+    questionnaire.value.subjectList = util.remove<QuestionnaireSubject>(questionnaire.value.subjectList, questionnaire.value.subjectList.length - 1)
   }
+}
+
+/**
+ * 添加一个选项
+ */
+function addOption() {
+  if (!questionnaire.value) {
+    return
+  }
+  questionnaire.value.subjectList[data.currentIndex].options.push({
+    id: new Date().getTime().toString(), // 添加时作为列表的key使用,之后移除
+    title: '',
+    subjectId: '',
+    sort: questionnaire.value.subjectList[data.currentIndex].options.length,
+    description: undefined
+  })
 }
 
 /**
  * 重置问卷数据
  */
 function reborn() {
-  data.questionnaire = {
+  questionnaire.value = {
     id: undefined,
-    title: undefined,
-    details: undefined,
-    totalScore: undefined,
-    isEnable: QuestionnaireStatus.ALIVE, // 默认启用
-    createDate: undefined,
-    lastUpdateUserName: undefined,
-    lastUpdateDate: undefined,
-    type: undefined,
+    title: '',
+    details: '',
+    type: '',
     subjectList: []
   }
 }

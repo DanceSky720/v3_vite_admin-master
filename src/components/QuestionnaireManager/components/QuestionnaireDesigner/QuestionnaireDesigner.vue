@@ -50,8 +50,8 @@
         @dragleave="$emit('dragleave')"
       >
         <div
-          v-for="(subject, index) in questionnaire?.subjectList"
-          :key="subject.rid"
+          v-for="(subject, index) in questionnaire.subjectList"
+          :key="subject.id"
           :style="{ boxShadow: shadow(subject) }"
           :class="preview ? '' : 'relative-subject'"
           class="subject"
@@ -147,7 +147,7 @@ const props = defineProps({
    * 问卷
    */
   modelValue: {
-    type: Object as PropType<QuestionnaireEditorialVersion>,
+    type: Object as PropType<Questionnaire>,
     default: undefined
   },
   /**
