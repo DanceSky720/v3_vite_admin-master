@@ -26,8 +26,8 @@
           @chosen="addSubject"
         />
         <PanelTopicDesigner
-          class="dialog-container-left-designer"
           v-model="questionnaire.subjectList[data.currentIndex]"
+          class="dialog-container-left-designer"
           @add-option="addOption"
         />
       </div>
@@ -100,8 +100,10 @@ watch(() => questionnaire.value, (newValue) => {
 watch(() => data.open, (newValue) => {
   emit('update:show', newValue)
 })
+
 /**
  * 添加一个问卷项目
+ * @param type 问卷类型
  */
 function addSubject(type: QuestionnaireSupportType) {
   if (!type) {
@@ -114,7 +116,7 @@ function addSubject(type: QuestionnaireSupportType) {
     id: new Date().getTime().toString(), // 添加时作为列表的key使用
     templateId: '',
     title: '',
-    sort: questionnaire.value.subjectList.length,
+    sort: 0,
     type: type,
     options: [],
     optionIds: [],
@@ -145,7 +147,7 @@ function addOption() {
     id: new Date().getTime().toString(), // 添加时作为列表的key使用,之后移除
     title: '',
     subjectId: '',
-    sort: questionnaire.value.subjectList[data.currentIndex].options.length,
+    sort: 0,
     description: undefined
   })
 }

@@ -1,15 +1,20 @@
 <template>
   <div class="container">
     <QuestionnaireManager
-      :data="data"
-      :questionnaire="q"
       v-model:current-page="current"
       v-model:show-dialog="show"
+      :data="data"
+      :questionnaire="q"
       class="manager"
       :save-func="something"
       @reload="reload"
       @query="query"
       @create="show = true"
+      @batch-deletion="t"
+      @edit="t"
+      @remove="t"
+      @view="t"
+      @close="show = false"
     />
   </div>
 </template>
@@ -58,8 +63,13 @@ function reload() {
   console.log(text);
 }
 
-function something(data: Questionnaire){
- console.log(data);
+function something(data1: Questionnaire){
+ console.log(data1);
+ data.value.push(data1)
+  
+}
+function t(){
+  console.log('click');
   
 }
 </script>

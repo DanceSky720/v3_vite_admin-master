@@ -48,32 +48,25 @@ function useTopicDesigner() {
  * @param index 交换的元素下标
  * @param index1 交换的元素下标1
  */
-function exchangeValue(index: number, index1: number) {
-  if (index1 === index) {
-    return
+  function exchangeValue(index: number, index1: number) {
+    if (index1 === index) {
+      return
+    }
+    if (!questionnaireSubject.value) {
+      return
+    }
+    questionnaireSubject.value.options = util.swapPlaces(
+      questionnaireSubject.value.options,
+      index,
+      index1
+    )
   }
-  if (!questionnaireSubject.value) {
-    return
-  }
-  questionnaireSubject.value.options = util.swapPlaces(
-    questionnaireSubject.value.options,
-    index,
-    index1
-  )
-}
 
   /**
    * 是否是选择型
    */
   const selective = computed(() => {
-    if (questionnaireSubject.value) {
-      return (
-        questionnaireSubject.value.type ===
-          QuestionnaireSupportType.CHECKBOX ||
-        questionnaireSubject.value.type === QuestionnaireSupportType.RADIO
-      )
-    }
-    return false
+    return questionnaireSubject.value ? [QuestionnaireSupportType.CHECKBOX, QuestionnaireSupportType.RADIO].includes(questionnaireSubject.value.type) : false
   })
 
   /**

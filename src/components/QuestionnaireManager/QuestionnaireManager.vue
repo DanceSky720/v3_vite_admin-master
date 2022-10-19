@@ -1,6 +1,9 @@
 <template>
   <div class="manager-container">
-    <OperateBar @reload="$emit('reload')" @query="$emit('query', $event)" />
+    <OperateBar
+      @reload="$emit('reload')"
+      @query="$emit('query', $event)"
+    />
     <ListQuestionnaire
       :data="data"
       @create="$emit('create')"
@@ -19,7 +22,7 @@
     <DialogQuestionnaireDesigner
       v-model="innerData.questionnaire"
       v-model:show="innerData.show"
-      @close="close"
+      @close="$emit('close')"
       @save="save"
     />
   </div>
@@ -30,7 +33,7 @@ import { PropType, reactive, watch } from 'vue'
 import ListQuestionnaire from './components/ListQuestionnaire/ListQuestionnaire.vue'
 import OperateBar from './components/OperateBar/OperateBar.vue'
 import DialogQuestionnaireDesigner from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
-
+import util from './util'
 defineExpose({ name: 'QuestionnaireManager' })
 const props = defineProps({
   /**
@@ -38,49 +41,49 @@ const props = defineProps({
    */
   data: {
     type: Object as PropType<Questionnaire[]>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 问卷
    */
   questionnaire: {
     type: Object as PropType<Questionnaire>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 保存问卷的方法
    */
   saveFunc: {
     type: Function as PropType<(data: Questionnaire) => void>,
-    default: undefined,
+    default: undefined
   },
   /**
    * 编辑弹窗显隐控制
    */
   showDialog: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * 当前页
    */
   currentPage: {
     type: Number,
-    default: 1,
+    default: 1
   },
   /**
    * 页数
    */
   pageSize: {
     type: Number,
-    default: 10,
-  },
+    default: 10
+  }
 })
 
 const innerData: QuestionnaireManagerData = reactive({
   innerCurrentPage: 1,
   show: false,
-  questionnaire: undefined,
+  questionnaire: undefined
 })
 
 const emit = defineEmits([
@@ -93,6 +96,7 @@ const emit = defineEmits([
   'remove',
   'view',
   'batch-deletion',
+  'close'
 ])
 
 watch(
@@ -112,8 +116,7 @@ watch(
   }
 )
 
-watch(
-  () => innerData.show,
+watch(() => innerData.show,
   (newValue) => {
     emit('update:showDialog', newValue)
   }
@@ -124,27 +127,23 @@ watch(
  */
 function save() {
   if (props.saveFunc && innerData.questionnaire) {
-    props.saveFunc(innerData.questionnaire)
+    const copy = util.deepCopy(innerData.questionnaire)
+    // 删除之前用作key的id并且添加sort排序
+    copy.subjectList = copy.subjectList.map((subject: QuestionnaireSubject, index: number) => {
+      subject.id = undefined
+      subject.sort = index
+      subject.options = subject.options.map((option: SubjectOption, i: number) => {
+        option.id = undefined
+        option.sort = i
+        return option
+      })
+      return subject
+    })
+    props.saveFunc(copy)
   }
   innerData.show = false
 }
 
-/**
- * 编辑弹窗关闭
- */
-function close() {
-  innerData.show = false
-  emit('reload')
-}
-
-function surfaceCopy<T extends object>(source: T | T[]) {
-  const copy = (target: object) => {
-    return Object.fromEntries(Object.entries(source))
-  }
-  return Array.isArray(source)
-    ? source.map((value) => copy(value))
-    : copy(source)
-}
 </script>
 
 <style lang="scss" scoped>

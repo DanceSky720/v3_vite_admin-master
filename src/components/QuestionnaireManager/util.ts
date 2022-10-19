@@ -69,9 +69,42 @@ function remove<T>(array: T[], index: number): T[] {
   return [...array.slice(0, index), ...array.slice(index + 1)]
 }
 
+/**
+ * 返回一个目标的深拷贝
+ * @param source 源目标
+ */
+function deepCopy<T extends object>(source: T) {
+  const type = <T extends object>(target: T) => Object.prototype.toString.call(target).slice(8, -1)
+  const obj = <T extends object>(target: T) => type(target) === Object.name
+  const arr = <T extends object>(target: T) => type(target) === Array.name
+  const str = <T extends object>(target: T) => type(target) === String.name
+  const bln = <T extends object>(target: T) => type(target) === Boolean.name
+  const num = <T extends object>(target: T) => type(target) === Number.name
+  if(str(source) || bln(source) || num(source)){
+    return source
+  }
+  // 该项目暂时只需处理object类型数据
+  if (!obj(source)) {
+    throw Error('该方法只处理能Object类型数据')
+  }
+  function copy<K>(target: K): K {
+    return Object.fromEntries(Object.entries(target).map(([key, value]) => {
+      if (obj(value)) {
+        return [key, copy(value)]
+      }
+      if (arr(value)) {
+        return [key, value.map((item: object) => copy(item))]
+      }
+      return [key, value]
+    })) as K
+  }
+  return copy(source) as T
+}
+
 export default {
   upwards,
   downward,
   swapPlaces,
   remove,
+  deepCopy
 }
