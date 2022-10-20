@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <QuestionnaireManager
+     :loading="false"
       v-model:current-page="current"
       v-model:show-dialog="show"
       :data="data"

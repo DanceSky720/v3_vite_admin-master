@@ -1,5 +1,8 @@
 <template>
-  <div class="manager-container">
+  <div
+    v-loading="loading"
+    class="manager-container"
+  >
     <OperateBar
       @reload="$emit('reload')"
       @query="$emit('query', $event)"
@@ -49,6 +52,13 @@ const props = defineProps({
   questionnaire: {
     type: Object as PropType<Questionnaire>,
     default: undefined
+  },
+  /**
+   * 加载状态
+   */
+  loading:{
+    type: Boolean,
+    default: false 
   },
   /**
    * 保存问卷的方法
