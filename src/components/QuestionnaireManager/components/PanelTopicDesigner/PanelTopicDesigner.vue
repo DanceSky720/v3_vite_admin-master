@@ -17,7 +17,6 @@
                 placeholder="为题目添加标题"
               />
             </el-form-item>
-
             <el-form-item
               label="必填"
               size="large"
@@ -51,7 +50,7 @@
             <div
               v-for="(option, index) in questionnaireSubject?.options"
               :key="option.id"
-              draggable="true"
+              :draggable="drag"
               class="transition-group-options"
               :class="data.dancing ? 'event-done' : ''"
               @dragenter="dragenter(index)"
@@ -62,6 +61,7 @@
               <el-form-item>
                 <div class="option-line">
                   <el-button
+                    v-if="drag"
                     :icon="Rank"
                     circle
                     plain
@@ -120,6 +120,13 @@ const props = defineProps({
   modelValue: {
     type: Object as PropType<QuestionnaireSubject>,
     default: undefined
+  },
+  /**
+   * 是否支持拖动
+   */
+  drag: {
+    type: Boolean,
+    default: false
   }
 })
 
