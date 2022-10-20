@@ -14,8 +14,8 @@
 | questionnaire       | 问卷             | object   | undefined | 0.1.0    |
 | loading  | 加载状态 | boolean  | false     | 0.1.0    |
 | saveFunc            | 保存问卷的方法   | function | null      | 0.1.0    |
-| v-model:currentPage | 当前页           | number   | 1         | 0.1.0    |
-| v-model:showDialog  | 编辑弹窗显隐控制 | boolean  | false     | 0.1.0    |
+| v-model:current-page | 当前页           | number   | 1         | 0.1.0    |
+| v-model:show-dialog  | 编辑弹窗显隐控制 | boolean  | false     | 0.1.0    |
 | pageSize            | 页码             | number   | 10        | 0.1.0    |
 
 1. _currentPage_ 的改变可用 _watch_ 监听
