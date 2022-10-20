@@ -48,12 +48,12 @@ graph BT
 
 ```
 
-1. 题目选项设计面板 [PanelTopicDesigner](./PanelTopicDesigner/README.md)
-2. 问卷题目类型选择器 [TopicSelector](./TopicSelector/README.md)
-3. 题目设计面板 [QuestionnaireDesigner](./QuestionnaireDesigner/README.md)
-4. 题目设计弹窗 [DialogQuestionnaireDesigner](./DialogQuestionnaireDesigner/README.md)
-5. 操作栏 [OperateBar](./OperateBar/README.md)
-6. 问卷列表 [ListQuestionnaire](./ListQuestionnaire/README.md)
+1. 题目选项设计面板 [PanelTopicDesigner](./components/PanelTopicDesigner/README.md)
+2. 问卷题目类型选择器 [TopicSelector](./components/TopicSelector/README.md)
+3. 题目设计面板 [QuestionnaireDesigner](./components/QuestionnaireDesigner/README.md)
+4. 题目设计弹窗 [DialogQuestionnaireDesigner](./components/DialogQuestionnaireDesigner/README.md)
+5. 操作栏 [OperateBar](./components/OperateBar/README.md)
+6. 问卷列表 [ListQuestionnaire](./components/ListQuestionnaire/README.md)
 7. 问卷管理组件/本组件 [QuestionnaireManager](./README.md)
 
 ## 4. 测试计划 👻
