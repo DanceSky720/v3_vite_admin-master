@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <QuestionnaireManager
-     :loading="false"
+      :loading="loading"
       v-model:current-page="current"
       v-model:show-dialog="show"
       :data="data"
@@ -23,10 +23,30 @@
 <script setup lang="ts" name="V1Test">
 import { reactive, ref, toRefs, watch } from 'vue'
 import QuestionnaireManager from '../../../components/QuestionnaireManager/QuestionnaireManager.vue'
-import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity';
+import { QuestionnaireStatus } from '../../../entity/enum/QuestionnaireStatus.entity'
 
 let show = ref(false)
+let loading = ref(false)
 let current = ref(1)
+
+const promise = ref<Promise<void>>()
+
+const test = async (params: string) => {}
+
+promise.value = test('')
+
+watch(() => promise.value,
+  async (newPromise) => {
+    loading.value = true
+    try {
+      await newPromise
+    } catch (error) {
+      console.error(error)
+      // 提示错误信息的组件
+    }
+    loading.value = false
+  },{ deep: true }
+)
 
 let data = ref<Questionnaire[]>([])
 let q = ref<Questionnaire | undefined>({
@@ -46,32 +66,27 @@ let q = ref<Questionnaire | undefined>({
   /**
    * 项目列表
    */
-  subjectList: []
+  subjectList: [],
 })
-
-
 
 function reload() {
   console.log('reload')
 }
 
-
 /**
  * 查询按钮点击
  * @param text 查询关键字
  */
- function query(text: string){
-  console.log(text);
+function query(text: string) {
+  console.log(text)
 }
 
-function something(data1: Questionnaire){
- console.log(data1);
- data.value.push(data1)
-  
+function something(data1: Questionnaire) {
+  console.log(data1)
+  data.value.push(data1)
 }
-function t(){
-  console.log('click');
-  
+function t() {
+  console.log('click')
 }
 </script>
 
