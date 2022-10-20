@@ -17,42 +17,42 @@ function swapPlaces<T>(array: T[], wanna: number, wannabe: number): T[] {
   })
 }
 /**
- * 返回一个将底部元素置顶的数组
- * @param array 要改变的数组
- * @returns 改变过的数组
- */
+       * 返回一个将底部元素置顶的数组
+       * @param array 要改变的数组
+       * @returns 改变过的数组
+       */
 function layMeUp<T>(array: T[]): T[] {
   return array.map((item: T, index: number) => {
     return index === 0 ? array[array.length - 1] : array[index - 1]
   })
 }
 /**
- * 返回一个将顶部元素置底的数组
- * @param array 要改变的数组
- * @returns 改变过的数组
- */
+       * 返回一个将顶部元素置底的数组
+       * @param array 要改变的数组
+       * @returns 改变过的数组
+       */
 function layMeDown<T>(array: T[]): T[] {
   return array.map((item: T, index: number) => {
     return index === array.length - 1 ? array[0] : array[index + 1]
   })
 }
 /**
- * 返回一个元素上移的数组,如果这个要上移的元素下标为0,将其置底
- * @param array 要交换的数组
- * @param wanna 要上移的元素下标
- * @returns 交换过的数组
- */
+       * 返回一个元素上移的数组,如果这个要上移的元素下标为0,将其置底
+       * @param array 要交换的数组
+       * @param wanna 要上移的元素下标
+       * @returns 交换过的数组
+       */
 function upwards<T>(array: T[], wanna: number): T[] {
   return wanna === 0
     ? layMeDown(array)
     : swapPlaces(array, wanna, wanna - 1)
 }
 /**
- * 返回一个元素下移的数组,如果这个要下移的元素下标位置在数组最后一位,则将其置顶
- * @param array 要交换的数组
- * @param wanna 要下移的元素下标
- * @returns 交换过的数组
- */
+       * 返回一个元素下移的数组,如果这个要下移的元素下标位置在数组最后一位,则将其置顶
+       * @param array 要交换的数组
+       * @param wanna 要下移的元素下标
+       * @returns 交换过的数组
+       */
 function downward<T>(array: T[], wanna: number): T[] {
   if (wanna + 1 > array.length - 1) {
     return layMeUp(array)
@@ -60,32 +60,33 @@ function downward<T>(array: T[], wanna: number): T[] {
   return swapPlaces(array, wanna, wanna + 1)
 }
 /**
- * 返回一个移除指定下标元素的数组
- * @param array 要改变的数组
- * @param index 要移除的元素下标
- * @returns 改变过的数组
- */
+       * 返回一个移除指定下标元素的数组
+       * @param array 要改变的数组
+       * @param index 要移除的元素下标
+       * @returns 改变过的数组
+       */
 function remove<T>(array: T[], index: number): T[] {
   return [...array.slice(0, index), ...array.slice(index + 1)]
 }
 
 /**
- * 返回一个目标的深拷贝
- * @param source 源目标
- */
+   * 返回一个目标的深拷贝
+   * @param source 源目标
+   */
 function deepCopy<T extends object>(source: T) {
-  const type = <T extends object>(target: T) => Object.prototype.toString.call(target).slice(8, -1)
+  const type = <T extends object | null | undefined>(target: T):string => Object.prototype.toString.call(target).slice(8, -1)
+  const base = [String.name, Boolean.name, Number.name]
+  base.push(type(null))
+  base.push(type(undefined))
   const obj = <T extends object>(target: T) => type(target) === Object.name
   const arr = <T extends object>(target: T) => type(target) === Array.name
-  const str = <T extends object>(target: T) => type(target) === String.name
-  const bln = <T extends object>(target: T) => type(target) === Boolean.name
-  const num = <T extends object>(target: T) => type(target) === Number.name
-  if(str(source) || bln(source) || num(source)){
+  const baseType = (type: string) => base.includes(type)
+  if (baseType(type(source))) {
     return source
   }
   // 该项目暂时只需处理object类型数据
   if (!obj(source)) {
-    throw Error('该方法只处理能Object类型数据')
+    throw Error(`暂不支持${type(source)}类型数据`)
   }
   function copy<K>(target: K): K {
     return Object.fromEntries(Object.entries(target).map(([key, value]) => {
