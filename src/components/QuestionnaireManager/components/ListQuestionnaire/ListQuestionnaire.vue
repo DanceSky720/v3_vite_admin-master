@@ -116,10 +116,7 @@ const allow = computed(() => {
  * 选中要删除的问卷的id集合
  */
 const ids = computed(() => {
-  if (selected.value) {
-    return selected?.value?.map((q: Questionnaire) => q.id)
-  }
-  return null
+  return selected.value ? selected.value.map((q: Questionnaire) => q.id) : []
 })
 
 defineEmits(['edit', 'view', 'remove', 'create', 'batch-deletion'])

@@ -47,7 +47,14 @@ watch(() => promise.value,
     loading.value = false
   },{ deep: true }
 )
+const tete =async () => {
+  await console.log('hello');
+}
+setTimeout(()=>{
+  promise.value = tete()
+},5000)
 
+promise.value = tete()
 let data = ref<Questionnaire[]>([])
 let q = ref<Questionnaire | undefined>({
   id: '',

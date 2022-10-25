@@ -7,7 +7,7 @@ function useVisible(){
   const y = ref(0)
 
   // 组合式函数可以随时更改其状态。
-  function update(event) {
+  function update(event: MouseEvent) {
     x.value = event.pageX
     y.value = event.pageY
   }

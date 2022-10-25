@@ -17,16 +17,6 @@
                 placeholder="为题目添加标题"
               />
             </el-form-item>
-            <el-form-item
-              label="必填"
-              size="large"
-            >
-              <el-switch
-                size="large"
-                active-text="是"
-                inactive-text="否"
-              />
-            </el-form-item>
           </el-form>
           <el-divider> <h2>选项</h2> </el-divider>
           <el-button
@@ -210,10 +200,6 @@ function dragstart(index: number) {
   clear: both;
   border-radius: $q-border-radius-normal;
   transition: $q-transition-speed1;
-}
-
-.action-right {
-  align-self: flex-start;
 }
 
 .edit-area-add-btn {

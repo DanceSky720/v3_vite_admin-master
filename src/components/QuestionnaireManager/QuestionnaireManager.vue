@@ -23,7 +23,7 @@
       :total="data?.length"
     />
     <DialogQuestionnaireDesigner
-      v-model="innerData.questionnaire"
+      v-model="uQuestionnaire"
       v-model:show="innerData.show"
       @close="$emit('close')"
       @save="save"
@@ -36,7 +36,8 @@ import { PropType, reactive, watch } from 'vue'
 import ListQuestionnaire from './components/ListQuestionnaire/ListQuestionnaire.vue'
 import OperateBar from './components/OperateBar/OperateBar.vue'
 import DialogQuestionnaireDesigner from './components/DialogQuestionnaireDesigner/DialogQuestionnaireDesigner.vue'
-import util from './util'
+import useQuestionnaireDesigner from './hooks/useQuestionnaireDesigner'
+const { questionnaire: uQuestionnaire, getProcessedCopies } = useQuestionnaireDesigner()
 defineExpose({ name: 'QuestionnaireManager' })
 const props = defineProps({
   /**
@@ -56,9 +57,9 @@ const props = defineProps({
   /**
    * 加载状态
    */
-  loading:{
+  loading: {
     type: Boolean,
-    default: false 
+    default: false
   },
   /**
    * 保存问卷的方法
@@ -92,8 +93,7 @@ const props = defineProps({
 
 const innerData: QuestionnaireManagerData = reactive({
   innerCurrentPage: 1,
-  show: false,
-  questionnaire: undefined
+  show: false
 })
 
 const emit = defineEmits([
@@ -112,7 +112,7 @@ const emit = defineEmits([
 watch(
   [() => props.questionnaire, () => props.showDialog, () => props.currentPage],
   ([questionnaire, showDialog, currentPage]) => {
-    innerData.questionnaire = questionnaire
+    uQuestionnaire.value = questionnaire
     innerData.innerCurrentPage = currentPage
     innerData.show = showDialog
   },
@@ -133,22 +133,14 @@ watch(() => innerData.show,
 )
 
 /**
- * 保存按钮点击
+ * 保存按钮点击,返回一个处理过的数据
  */
 function save() {
-  if (props.saveFunc && innerData.questionnaire) {
-    const copy = util.deepCopy(innerData.questionnaire)
-    // 删除之前用作key的id并且添加sort排序
-    copy.subjectList = copy.subjectList.map((subject: QuestionnaireSubject, index: number) => {
-      subject.id = undefined
-      subject.sort = index
-      subject.options = subject.options.map((option: SubjectOption, i: number) => {
-        option.id = undefined
-        option.sort = i
-        return option
-      })
-      return subject
-    })
+  if (props.saveFunc && uQuestionnaire.value) {
+    const copy = getProcessedCopies()
+    if (!copy) {
+      return
+    }
     props.saveFunc(copy)
   }
   innerData.show = false

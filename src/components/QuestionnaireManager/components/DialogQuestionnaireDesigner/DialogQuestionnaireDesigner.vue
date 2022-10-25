@@ -23,18 +23,18 @@
       <div class="dialog-container-left">
         <TopicSelector
           v-model="data.dancer"
-          @chosen="addSubject"
+          @chosen="addOneSubject"
         />
         <PanelTopicDesigner
           v-model="questionnaire.subjectList[data.currentIndex]"
           class="dialog-container-left-designer"
-          @add-option="addOption"
+          @add-option="addOption(data.currentIndex)"
         />
       </div>
       <QuestionnaireDesigner
         v-model="questionnaire"
         @save="$emit('save')"
-        @add-subject="addSubject(data.dancer as QuestionnaireSupportType)"
+        @add-subject="addOneSubject(data.dancer as QuestionnaireSupportType)"
         @dragleave="dragleave()"
         @view="data.currentIndex = $event"
         @close="handleClose"
@@ -52,10 +52,11 @@
 import { QuestionnaireSupportType } from '@/entity/enum/QuestionnaireSupportType.entity'
 import QuestionnaireDesigner from '../QuestionnaireDesigner/QuestionnaireDesigner.vue'
 import PanelTopicDesigner from '../PanelTopicDesigner/PanelTopicDesigner.vue'
+import useQuestionnaireDesigner from '../../hooks/useQuestionnaireDesigner'
 import TopicSelector from '../TopicSelector/TopicSelector.vue'
-import { PropType, reactive, ref, watch } from 'vue'
+import { PropType, reactive, watch } from 'vue'
 import { ElMessageBox } from 'element-plus'
-import util from '../../util'
+const { questionnaire, addSubject, reborn, remove, addOption } = useQuestionnaireDesigner()
 
 const props = defineProps({
   /**
@@ -80,8 +81,6 @@ const data: DialogQuestionnaireDesignerData = reactive({
   currentIndex: 0
 })
 
-const questionnaire = ref<Questionnaire | undefined>()
-
 const emit = defineEmits(['update:modelValue', 'update:show', 'close', 'save'])
 
 watch(
@@ -105,23 +104,11 @@ watch(() => data.open, (newValue) => {
  * 添加一个问卷项目
  * @param type 问卷类型
  */
-function addSubject(type: QuestionnaireSupportType) {
-  if (!type) {
+function addOneSubject(type: QuestionnaireSupportType) {
+  if (!type || !questionnaire.value?.subjectList) {
     return
   }
-  if (!questionnaire.value?.subjectList) {
-    return
-  }
-  questionnaire.value.subjectList.push({
-    id: new Date().getTime().toString(), // 添加时作为列表的key使用
-    templateId: '',
-    title: '',
-    sort: 0,
-    type: type,
-    options: [],
-    optionIds: [],
-    extend: ''
-  })
+  addSubject(type)
   data.currentIndex = questionnaire.value.subjectList.length - 1
 }
 /**
@@ -132,38 +119,10 @@ function dragleave() {
     return
   }
   if (questionnaire.value) {
-    questionnaire.value.subjectList = util.remove<QuestionnaireSubject>(questionnaire.value.subjectList, questionnaire.value.subjectList.length - 1)
+    remove(questionnaire.value.subjectList.length - 1)
   }
 }
 
-/**
- * 添加一个选项
- */
-function addOption() {
-  if (!questionnaire.value) {
-    return
-  }
-  questionnaire.value.subjectList[data.currentIndex].options.push({
-    id: new Date().getTime().toString(), // 添加时作为列表的key使用,之后移除
-    title: '',
-    subjectId: '',
-    sort: 0,
-    description: undefined
-  })
-}
-
-/**
- * 重置问卷数据
- */
-function reborn() {
-  questionnaire.value = {
-    id: undefined,
-    title: '',
-    details: '',
-    type: '',
-    subjectList: []
-  }
-}
 /**
  * 关闭前处理函数
  */

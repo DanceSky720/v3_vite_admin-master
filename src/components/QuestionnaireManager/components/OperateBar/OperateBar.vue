@@ -24,7 +24,6 @@
         />
       </el-form-item>
     </el-form>
-
     <el-button
       class="bar-container_btn"
       :icon="Refresh"
@@ -51,15 +50,15 @@ import { computed, ref } from 'vue'
 /**
  * 输入框绑定值
  */
-const data = ref(['',''])
+const data = ref(['', ''])
 
 defineEmits(['reload', 'query'])
 
 /**
  * 是否允许点击 查询 按钮
  */
-const allow = computed(()=>{
-  return data.value.every((item:string) => item.length > 0 )
+const allow = computed(() => {
+  return data.value.every((text: string) => text.length > 0)
 })
 </script>
 

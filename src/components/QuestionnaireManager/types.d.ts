@@ -10,8 +10,4 @@ type QuestionnaireManagerData = {
    * 当前页
    */
   innerCurrentPage: number
-  /**
-   * 问卷
-   */
-  questionnaire: Questionnaire | undefined
 }

@@ -66,11 +66,9 @@ watch(() => data.dancer,
  */
 function submit(index: number, submit: boolean) {
   const type = data.supportedComponents[index]
-  data.dancer = type[1]
   if (submit) {
     emit('chosen', type[1])
   }
-  data.dancer = ''
   data.supportedComponents.splice(index, 1)
   window.setTimeout(() => {
     data.supportedComponents.push(type)
@@ -93,17 +91,10 @@ function submit(index: number, submit: boolean) {
 
 .selector-transition-group {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   transition: all;
-  flex-wrap: wrap;
-}
-
-.components-title {
-  margin-bottom: 20px;
-  font-size: 26px;
-  font-weight: bold;
-  text-align: center;
 }
 
 .btn-selector {

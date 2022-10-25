@@ -74,12 +74,15 @@ function remove<T>(array: T[], index: number): T[] {
 function deepCopy<T extends object>(source: T) {
   const type = <T extends object | null | undefined>(target: T): string =>
     Object.prototype.toString.call(target).slice(8, -1)
-  const base = [String.name, Boolean.name, Number.name]
-  base.push(type(null))
-  base.push(type(undefined))
+  const base = new Set<string>()
+    .add(String.name)
+    .add(Boolean.name)
+    .add(Number.name)
+    .add(type(null))
+    .add(type(undefined))
   const obj = <T extends object>(target: T) => type(target) === Object.name
   const arr = <T extends object>(target: T) => type(target) === Array.name
-  const baseType = (type: string) => base.includes(type)
+  const baseType = (type: string) => base.has(type)
   if (baseType(type(source))) {
     return source
   }
@@ -108,5 +111,5 @@ export default {
   downward,
   swapPlaces,
   remove,
-  deepCopy,
+  deepCopy
 }
